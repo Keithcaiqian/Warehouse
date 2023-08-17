@@ -4,6 +4,7 @@ import { setupNaiveDiscreteApi, setupNaive, setupDirectives } from '@/plugins';
 import App from './App.vue';
 import router, { setupRouter } from './router';
 import { setupStore } from '@/store';
+import { globalRegister } from './global';
 
 async function bootstrap() {
   const app = createApp(App);
@@ -13,6 +14,9 @@ async function bootstrap() {
 
   // 注册全局常用的 naive-ui 组件
   setupNaive(app);
+
+  // 注册全局常用组件（ element plus）
+  globalRegister(app);
 
   // 挂载 naive-ui 脱离上下文的 Api
   setupNaiveDiscreteApi();

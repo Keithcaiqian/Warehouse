@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -62,6 +62,12 @@ dependencies:
   vue-types:
     specifier: ^4.2.1
     version: 4.2.1(vue@3.3.4)
+  vxe-table:
+    specifier: ^4.5.1
+    version: 4.5.1(vue@3.3.4)(xe-utils@3.5.11)
+  xe-utils:
+    specifier: ^3.5.11
+    version: 3.5.11
 
 devDependencies:
   '@commitlint/cli':
@@ -7642,6 +7648,16 @@ packages:
       vue: 3.3.4
     dev: false
 
+  /vxe-table@4.5.1(vue@3.3.4)(xe-utils@3.5.11):
+    resolution: {integrity: sha512-IlaiXJj5NqBqPguEmcQjb4yLab0ZXKZ4KpLguZ3MxzfMQ57WgD7ij3U5wqo/6+ggEWgyN/1lFR5hLbZJr9DFug==}
+    peerDependencies:
+      vue: ^3.2.28
+      xe-utils: ^3.5.0
+    dependencies:
+      vue: 3.3.4
+      xe-utils: 3.5.11
+    dev: false
+
   /walker@1.0.8:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
     dependencies:
@@ -7760,6 +7776,10 @@ packages:
       imurmurhash: 0.1.4
       signal-exit: 3.0.7
     dev: true
+
+  /xe-utils@3.5.11:
+    resolution: {integrity: sha512-lyKc/lTBga1Zb63p+FED8mtxLnYIjSS8PVJM1N64NGdCu/3d1XubaVeke2p91RHssP0ExVAl2LUqZYperoz76Q==}
+    dev: false
 
   /xml-name-validator@4.0.0:
     resolution: {integrity: sha512-ICP2e+jsHvAj2E2lIHxa5tjXRlKDJo4IdvPvCXbXQGdzSfmSpNVyIKMvoZHjDY9DP0zV17iI85o90vRFXNccRw==}
