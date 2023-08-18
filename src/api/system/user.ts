@@ -17,7 +17,7 @@ export interface BasicPageParams {
  */
 export function getUserInfo() {
   return http.request({
-    url: '/admin_info',
+    url: '/user/getUserInfo',
     method: 'get',
   });
 }
@@ -28,7 +28,7 @@ export function getUserInfo() {
 export function login(params) {
   return http.request<BasicResponseModel>(
     {
-      url: '/login',
+      url: '/user/login',
       method: 'POST',
       params,
     },
@@ -39,19 +39,25 @@ export function login(params) {
 }
 
 /**
- * @description: 用户修改密码
+ * @description: 修改用户密码
  */
-export function changePassword(params, uid) {
-  return http.request(
-    {
-      url: `/user/u${uid}/changepw`,
-      method: 'POST',
-      params,
-    },
-    {
-      isTransformResponse: false,
-    }
-  );
+export function changePassword(params) {
+  return http.request({
+    url: `/user/edit/password`,
+    method: 'POST',
+    params,
+  });
+}
+
+/**
+ * @description: 修改用户信息
+ */
+export function changeUserInfo(params) {
+  return http.request({
+    url: `/user/edit/info`,
+    method: 'POST',
+    params,
+  });
 }
 
 /**
@@ -61,6 +67,17 @@ export function logout(params) {
   return http.request({
     url: '/login/logout',
     method: 'POST',
+    params,
+  });
+}
+
+/**
+ * @description: 获取用户列表
+ */
+export function getUserList(params) {
+  return http.request({
+    url: '/user/list',
+    method: 'GET',
     params,
   });
 }

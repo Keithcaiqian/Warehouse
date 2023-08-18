@@ -1,11 +1,14 @@
 <template>
   <div class="main-page">
-    <h1>原料管理</h1>
+    <h1>成品入库</h1>
 
     <vxe-grid ref="table$" v-bind="table">
       <!--将表单放在工具栏中-->
       <template #toolbar_buttons>
-        <n-button @click="openMaterialAddOrEditModal" type="info">添加原料</n-button>
+        <n-space>
+          <n-button @click="openMaterialAddOrEditModal" type="info">添加入库</n-button>
+          <n-date-picker type="daterange" />
+        </n-space>
       </template>
 
       <template #toolbar_tools>
@@ -43,16 +46,12 @@
         />
       </template>
     </vxe-grid>
-
-    <MaterialAddOrEditModal ref="materialAddOrEditModal$" />
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, reactive } from 'vue';
   import { Search } from '@vicons/ionicons5';
-
-  import MaterialAddOrEditModal from './container/materialAddOrEditModal.vue';
 
   import useVxeTable from '@/hooks/useVxeTable';
 

@@ -59,8 +59,8 @@
   import { ref, reactive } from 'vue';
   import { Search } from '@vicons/ionicons5';
 
-  import ProductAddOrEditModal from './components/productAddOrEditModal.vue';
-  import ProductCategoryManageModal from './components/productCategoryManageModal.vue';
+  import ProductAddOrEditModal from './container/productAddOrEditModal.vue';
+  import ProductCategoryManageModal from './container/productCategoryManageModal.vue';
 
   import useVxeTable from '@/hooks/useVxeTable';
 

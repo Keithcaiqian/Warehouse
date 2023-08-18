@@ -3,8 +3,7 @@ import { Layout } from '@/router/constant';
 import { DashboardOutlined } from '@vicons/antd';
 import { renderIcon } from '@/utils/index';
 
-const routeName = 'dashboard';
-
+const routeName = 'putWarehouse';
 /**
  * @param name 路由名称, 必须设置,且不能重名
  * @param meta 路由元信息（路由附带扩展信息）
@@ -17,25 +16,31 @@ const routeName = 'dashboard';
  * */
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/dashboard',
+    path: '/putWarehouse',
     name: routeName,
+    redirect: '/putWarehouse/productPut',
     component: Layout,
-    redirect: '/dashboard/index',
     meta: {
+      title: '入库',
       icon: renderIcon(DashboardOutlined),
-      sort: 0,
-      isRoot: true,
-      activeMenu: 'dashboard_index',
+      sort: 2,
     },
     children: [
       {
-        path: 'index',
-        name: `dashboard_index`,
+        path: 'productPut',
+        name: `${routeName}_productPut`,
         meta: {
-          title: '首页',
-          activeMenu: 'dashboard_index',
+          title: '成品入库',
         },
-        component: () => import('@/views/dashboard/index.vue'),
+        component: () => import('@/views/putWarehouse/productPut/productPut.vue'),
+      },
+      {
+        path: 'materialPut',
+        name: `${routeName}_materialPut`,
+        meta: {
+          title: '原料入库',
+        },
+        component: () => import('@/views/putWarehouse/materialPut/materialPut.vue'),
       },
     ],
   },

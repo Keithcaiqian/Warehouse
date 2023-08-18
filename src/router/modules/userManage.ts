@@ -3,7 +3,7 @@ import { Layout } from '@/router/constant';
 import { DashboardOutlined } from '@vicons/antd';
 import { renderIcon } from '@/utils/index';
 
-const routeName = 'dashboard';
+const routeName = 'userManage';
 
 /**
  * @param name 路由名称, 必须设置,且不能重名
@@ -17,25 +17,25 @@ const routeName = 'dashboard';
  * */
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/dashboard',
+    path: '/userManage',
     name: routeName,
     component: Layout,
-    redirect: '/dashboard/index',
+    redirect: '/userManage/index',
     meta: {
       icon: renderIcon(DashboardOutlined),
-      sort: 0,
+      sort: 10,
       isRoot: true,
-      activeMenu: 'dashboard_index',
+      activeMenu: 'userManage_index',
     },
     children: [
       {
         path: 'index',
-        name: `dashboard_index`,
+        name: `userManage_index`,
         meta: {
-          title: '首页',
-          activeMenu: 'dashboard_index',
+          title: '人员管理',
+          activeMenu: 'userManage_index',
         },
-        component: () => import('@/views/dashboard/index.vue'),
+        component: () => import('@/views/userManage/index.vue'),
       },
     ],
   },
