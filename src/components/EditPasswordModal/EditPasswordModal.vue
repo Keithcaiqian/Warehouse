@@ -20,12 +20,29 @@
       label-placement="left"
       label-width="auto"
     >
-      <n-form-item label="密码" path="password">
+      <n-form-item label="本账号密码" path="password">
         <cn-input
           type="password"
           show-password-on="mousedown"
           :clearable="false"
           v-model:value="formDataRef.password"
+        />
+      </n-form-item>
+      <n-form-item label="要修改的新密码" path="user_password">
+        <cn-input
+          type="password"
+          show-password-on="mousedown"
+          :clearable="false"
+          v-model:value="formDataRef.user_password"
+          @input="handlePasswordInput"
+        />
+      </n-form-item>
+      <n-form-item label="重复新密码" path="repassword">
+        <cn-input
+          type="password"
+          show-password-on="mousedown"
+          :clearable="false"
+          v-model:value="formDataRef.repassword"
         />
       </n-form-item>
     </n-form>
@@ -54,10 +71,14 @@
   const { formDataRef, setFormData, validate } = useForm<{
     user_id: string | null;
     password: string | null;
+    user_password: string | null;
+    repassword: string | null;
   }>(
     {
       user_id: null,
       password: null,
+      user_password: null,
+      repassword: null,
     },
     formRef$
   );
@@ -66,9 +87,32 @@
     password: {
       required: true,
       message: '请输入密码',
-      trigger: ['blur'],
+      trigger: ['input', 'blur'],
+    },
+    user_password: {
+      required: true,
+      message: '请输入要修改用户的新密码',
+      trigger: ['input', 'blur'],
+    },
+    repassword: {
+      required: true,
+      trigger: ['blur', 'password-input'],
+      validator(rule: any, value: string) {
+        if (!value) {
+          return new Error('请输入要修改用户的新密码');
+        } else if (value !== formDataRef.value.user_password) {
+          return new Error('两次密码输入不一致');
+        }
+        return true;
+      },
     },
   };
+
+  function handlePasswordInput() {
+    if (formDataRef.value.repassword) {
+      formRef$.value?.validate({ trigger: 'password-input' });
+    }
+  }
 
   function handleConfirm() {
     validate().then(() => {

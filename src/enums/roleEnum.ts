@@ -7,17 +7,23 @@ export enum RoleEnum {
   USER = 'user',
 }
 
+export const roleMap = {
+  [RoleEnum.SUPERADMIN]: '超级管理员',
+  [RoleEnum.ADMIN]: '管理员',
+  [RoleEnum.USER]: '职员',
+};
+
 export const roleList = [
   {
     code: RoleEnum.SUPERADMIN,
-    name: '超级管理员',
+    name: roleMap[RoleEnum.SUPERADMIN],
   },
   {
     code: RoleEnum.ADMIN,
-    name: '管理员',
+    name: roleMap[RoleEnum.ADMIN],
   },
   {
     code: RoleEnum.USER,
-    name: '职员',
+    name: roleMap[RoleEnum.USER],
   },
 ];

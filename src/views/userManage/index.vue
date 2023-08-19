@@ -4,24 +4,33 @@
     <vxe-grid ref="table$" v-bind="table">
       <!--将表单放在工具栏中-->
       <template #toolbar_buttons>
-        <n-button @click="openMaterialAddOrEditModal" type="info">添加用户</n-button>
+        <n-button @click="openAddUserModal" type="info">添加用户</n-button>
       </template>
 
       <template #status_default="{ row }: any">
-        <n-switch v-model:value="row.status" checked-value="y" unchecked-value="n">
-          <template #checked> 已启用 </template>
-          <template #unchecked> 已禁用 </template>
-        </n-switch>
+        <n-popconfirm @positive-click="handleChangeStatus(row)" @negative-click="() => {}">
+          <template #trigger>
+            <n-switch
+              :value="row.status"
+              :loading="switchLoading"
+              @click="handleStatusClick(row.status)"
+              checked-value="y"
+              unchecked-value="n"
+            >
+              <template #checked> 已启用 </template>
+              <template #unchecked> 已禁用 </template>
+            </n-switch>
+          </template>
+          确定{{ targetStatus === 'n' ? '禁用' : '启用' }}该用户吗？
+        </n-popconfirm>
       </template>
 
-      <template #options_default="{ row }: row">
+      <template #options_default="{ row }: any">
         <n-space>
           <n-button @click="openEditPasswordModal(row.id)" size="small" type="info"
             >修改密码</n-button
           >
-          <n-button @click="openEditPhoneModal(row.id)" size="small" type="info"
-            >修改手机号</n-button
-          >
+          <n-button @click="openUserInfoModal(row)" size="small" type="info">修改信息</n-button>
         </n-space>
       </template>
 
@@ -46,8 +55,9 @@
       </template>
     </vxe-grid>
 
+    <AddUserModal ref="addUserModal$" @confirm="getUserListApi" />
     <EditPasswordModal ref="editPasswordModal$" @confirm="getUserListApi" />
-    <EditPhoneModal ref="editPhoneModal$" @confirm="getUserListApi" />
+    <EditUserInfoModal ref="editUserInfoModal$" @confirm="getUserListApi" />
   </div>
 </template>
 
@@ -56,10 +66,11 @@
 
   import useVxeTable from '@/hooks/useVxeTable';
   import EditPasswordModal from '@/components/EditPasswordModal/EditPasswordModal.vue';
-  import EditPhoneModal from './container/editPhoneModal.vue';
+  import EditUserInfoModal from './container/editUserInfoModal.vue';
+  import AddUserModal from './container/addUserModal.vue';
 
-  import { roleList } from '@/enums/roleEnum/';
-  import { getUserList } from '@/api/system/user';
+  import { roleMap } from '@/enums/roleEnum/';
+  import { getUserList, changeUserInfo } from '@/api/system/user';
 
   const tablePage = reactive({
     total: 0,
@@ -88,6 +99,13 @@
         title: '启用状态',
         slots: {
           default: 'status_default',
+        },
+      },
+      {
+        field: 'role_code',
+        title: '角色',
+        formatter({ cellValue }) {
+          return roleMap[cellValue];
         },
       },
       { field: 'update_time', title: '修改日期' },
@@ -119,6 +137,37 @@
     });
   }
 
+  // 添加用户
+  const addUserModal$ = ref();
+
+  function openAddUserModal() {
+    addUserModal$.value.open();
+  }
+
+  // 启用禁用
+  const switchLoading = ref(false);
+  const targetStatus = ref<'y' | 'n'>('y');
+
+  function handleStatusClick(status: 'y' | 'n') {
+    targetStatus.value = status === 'y' ? 'n' : 'y';
+  }
+
+  function handleChangeStatus(data: any) {
+    console.log('data', data);
+    switchLoading.value = true;
+    changeUserInfo({
+      user_id: data.id,
+      status: targetStatus.value,
+    })
+      .then(() => {
+        switchLoading.value = false;
+        getUserListApi();
+      })
+      .catch(() => {
+        switchLoading.value = false;
+      });
+  }
+
   //   修改密码
   const editPasswordModal$ = ref();
 
@@ -126,15 +175,16 @@
     editPasswordModal$.value.open(id);
   }
 
-  //   修改用户手机号
-  const editPhoneModal$ = ref();
+  //   修改用户信息
+  const editUserInfoModal$ = ref();
 
-  function openEditPhoneModal(id: string) {
-    editPhoneModal$.value.open(id);
+  function openUserInfoModal(row: any) {
+    editUserInfoModal$.value.open({
+      ...row,
+    });
   }
 
   onMounted(() => {
-    console.log('roleList', roleList);
     getUserListApi();
   });
 </script>
