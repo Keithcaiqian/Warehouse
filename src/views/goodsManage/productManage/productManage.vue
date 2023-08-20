@@ -7,9 +7,7 @@
       <template #toolbar_buttons>
         <n-space>
           <n-button @click="openProductCategoryManageModal" type="info">商品品类管理</n-button>
-          <n-button @click="openAddOrEditProductModal(null)" :loading="addLoading" type="info"
-            >添加成品</n-button
-          >
+          <n-button @click="openAddOrEditProductModal(null)" type="info">添加成品</n-button>
         </n-space>
       </template>
 
@@ -37,7 +35,14 @@
             </template>
             确定删除吗？
           </n-popconfirm>
-          <n-button v-if="row.is_assemble === 'y'" size="small" type="success"> 原料转化 </n-button>
+          <n-button
+            @click="openAssemblySettingModal(row)"
+            v-if="row.is_assemble === 'y'"
+            size="small"
+            type="success"
+          >
+            组装配置
+          </n-button>
         </n-space>
       </template>
 
@@ -72,8 +77,15 @@
         }
       "
     />
+
     <!-- 商品品类管理 -->
-    <ProductCategoryManageModal ref="productCategoryManageModal$" />
+    <ProductCategoryManageModal
+      ref="productCategoryManageModal$"
+      :getProductCategoryList="getProductCategoryListApi"
+    />
+
+    <!-- 原料转化 -->
+    <AssemblySettingModal ref="assemblySettingModal$" />
   </div>
 </template>
 
@@ -84,8 +96,9 @@
 
   import ProductAddOrEditModal from './container/productAddOrEditModal.vue';
   import ProductCategoryManageModal from './container/productCategoryManageModal.vue';
+  import AssemblySettingModal from './container/assemblySettingModal.vue';
 
-  import { getProductManageList, deleteProduct } from '@/api/product';
+  import { getProductCategoryList, getProductManageList, deleteProduct } from '@/api/product';
 
   import { useMessage } from 'naive-ui';
   const message = useMessage();
@@ -153,6 +166,12 @@
       {
         field: 'category_name',
         title: '商品品类',
+        filters: [
+          { label: '前端开发', value: '前端' },
+          { label: '后端开发', value: '后端' },
+          { label: '测试', value: '测试' },
+          { label: '程序员鼓励师', value: '程序员鼓励师' },
+        ],
       },
       { field: 'update_time', title: '修改日期' },
       { field: 'create_time', title: '创建日期' },
@@ -190,8 +209,6 @@
   }
 
   //   添加或编辑商品
-  const addLoading = ref(false);
-  const editLoading = ref(false);
   const productAddOrEditModal$ = ref();
 
   function openAddOrEditProductModal(
@@ -199,31 +216,7 @@
       [prop: string]: any;
     }
   ) {
-    if (data) {
-      editLoading.value = true;
-    } else {
-      addLoading.value = true;
-    }
-
-    productCategoryManageModal$.value
-      .getCategoryList()
-      .then((res) => {
-        if (data) {
-          editLoading.value = false;
-        } else {
-          addLoading.value = false;
-        }
-        categoryList.value = res;
-
-        productAddOrEditModal$.value.open(data);
-      })
-      .catch(() => {
-        if (data) {
-          editLoading.value = false;
-        } else {
-          addLoading.value = false;
-        }
-      });
+    productAddOrEditModal$.value.open(data);
   }
 
   // 删除成品
@@ -245,12 +238,45 @@
   const categoryList = ref([]);
   const productCategoryManageModal$ = ref();
 
+  function getProductCategoryListApi(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      table.loading = true;
+      getProductCategoryList()
+        .then((res) => {
+          table.loading = false;
+          categoryList.value = res;
+
+          // 设置商品品类列过滤配置
+          const filters = categoryList.value.map((item: any) => ({
+            label: item.name,
+            value: item.name,
+          }));
+          table$.value!.setFilter('category_name', filters);
+
+          resolve([...res]);
+        })
+        .catch(() => {
+          table.loading = false;
+          reject();
+        });
+    });
+  }
+
   function openProductCategoryManageModal() {
     productCategoryManageModal$.value.open();
   }
 
+  // 原料转化
+  const assemblySettingModal$ = ref();
+
+  function openAssemblySettingModal(data) {
+    assemblySettingModal$.value.open(data);
+  }
+
   onMounted(() => {
-    getProductManageListApi();
+    getProductCategoryListApi().then(() => {
+      getProductManageListApi();
+    });
   });
 </script>
 

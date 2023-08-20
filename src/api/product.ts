@@ -5,7 +5,7 @@ import { http } from '@/utils/http/axios';
  */
 export function getProductCategoryList() {
   return http.request({
-    url: '/product/category/list',
+    url: `/product/category/list`,
     method: 'get',
   });
 }
@@ -34,9 +34,9 @@ export function deleteProductCategory(id: string) {
 /**
  * @description: 获取成品管理列表
  */
-export function getProductManageList() {
+export function getProductManageList(is_assemble: 'y' | 'n' = 'n') {
   return http.request({
-    url: '/product/manage/list',
+    url: `/product/manage/list?is_assemble=${is_assemble}`,
     method: 'get',
   });
 }
@@ -70,5 +70,26 @@ export function deleteProduct(id: string) {
   return http.request({
     url: `/product/manage/delete/${id}`,
     method: 'delete',
+  });
+}
+
+/**
+ * @description: 编辑商品组装配置
+ */
+export function setProductAssembly(params: any) {
+  return http.request({
+    url: `/product/manage/assembly/set`,
+    method: 'post',
+    params,
+  });
+}
+
+/**
+ * @description: 编辑商品组装配置
+ */
+export function getProductAssembly(id: string) {
+  return http.request({
+    url: `/product/manage/assembly/${id}`,
+    method: 'get',
   });
 }

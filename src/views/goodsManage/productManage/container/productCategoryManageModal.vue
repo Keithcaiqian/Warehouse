@@ -99,12 +99,16 @@
   import useVxeTable from '@/hooks/useVxeTable';
   import useForm from '@/hooks/useForm';
 
-  import { getProductCategoryList, addProductCategory, deleteProductCategory } from '@/api/product';
+  import { addProductCategory, deleteProductCategory } from '@/api/product';
 
   import { useMessage } from 'naive-ui';
   const message = useMessage();
 
-  const listRef = ref([]); //列表所有数据
+  const props = defineProps<{
+    getProductCategoryList: () => Promise<any[]>;
+  }>();
+
+  const listRef = ref<any[]>([]); //列表所有数据
   const showModal = ref(false);
   const loading = ref(false);
 
@@ -212,7 +216,8 @@
   // 获取列表
   function getProductCategoryListApi(currentPage = 1) {
     table.loading = true;
-    getProductCategoryList()
+    props
+      .getProductCategoryList()
       .then((res) => {
         table.loading = false;
         listRef.value = res;
@@ -232,23 +237,6 @@
 
   defineExpose({
     open,
-    // 父组件获取列表 如果获取过则从缓存中获取，没有则调用接口
-    getCategoryList() {
-      return new Promise((resolve, reject) => {
-        if (listRef.value.length === 0) {
-          getProductCategoryList()
-            .then((res) => {
-              listRef.value = res;
-              resolve([...res]);
-            })
-            .catch(() => {
-              reject();
-            });
-        } else {
-          resolve([...listRef.value]);
-        }
-      });
-    },
   });
 </script>
 
