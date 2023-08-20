@@ -93,3 +93,14 @@ export function getProductAssembly(id: string) {
     method: 'get',
   });
 }
+
+/**
+ * @description: 获取入库成品列表
+ */
+export function getProductPutList(params: any) {
+  return http.request({
+    url: `/product/put/list`,
+    method: 'post',
+    params,
+  });
+}

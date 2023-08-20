@@ -35,6 +35,7 @@
     "axios": "^1.4.0",
     "blueimp-md5": "^2.19.0",
     "date-fns": "^2.30.0",
+    "dayjs": "^1.11.9",
     "echarts": "^5.4.3",
     "element-resize-detector": "^1.2.4",
     "lodash-es": "^4.17.21",
