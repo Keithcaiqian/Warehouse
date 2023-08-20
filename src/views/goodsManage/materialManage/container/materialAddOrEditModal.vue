@@ -31,7 +31,7 @@
     <template #footer>
       <n-space justify="end">
         <n-button @click="showModal = false">关闭</n-button>
-        <n-button type="info">确认</n-button>
+        <n-button :loading="loading" @click="handleConfirm" type="info">确认</n-button>
       </n-space>
     </template>
   </n-modal>
@@ -41,15 +41,24 @@
   import { ref } from 'vue';
 
   import useForm from '@/hooks/useForm';
+  import { addMaterial, editMaterial } from '@/api/material';
+
+  import { useMessage } from 'naive-ui';
+  const message = useMessage();
+
+  const emit = defineEmits(['confirm']);
 
   const showModal = ref(false);
   const formRef$ = ref();
+  const loading = ref(false);
 
-  const { formDataRef } = useForm<{
+  const { formDataRef, reset, setFormData, validate } = useForm<{
+    id: string | null;
     name: string | null;
     unit: string | null;
   }>(
     {
+      id: null,
       name: null,
       unit: null,
     },
@@ -59,18 +68,55 @@
   const rules = {
     name: {
       required: true,
-      message: '请输入商品名称',
-      trigger: ['blur'],
+      message: '请输入原料名称',
+      trigger: ['input', 'blur'],
     },
     unit: {
       required: true,
       message: '请输入单位',
-      trigger: ['blur'],
+      trigger: ['input', 'blur'],
     },
   };
 
-  function open() {
+  function open(data) {
+    if (data) {
+      setFormData({
+        ...data,
+      });
+    } else {
+      reset();
+    }
     showModal.value = true;
+  }
+
+  function handleConfirm() {
+    validate().then(() => {
+      let fn;
+      let type;
+      loading.value = true;
+      // 编辑
+      if (formDataRef.value.id) {
+        fn = editMaterial;
+        type = 'edit';
+      }
+      // 添加
+      else {
+        fn = addMaterial;
+        type = 'add';
+      }
+      fn({
+        ...formDataRef.value,
+      })
+        .then(() => {
+          loading.value = false;
+          showModal.value = false;
+          message.success(type === 'add' ? '添加成功' : '修改成功');
+          emit('confirm', type);
+        })
+        .catch(() => {
+          loading.value = false;
+        });
+    });
   }
 
   defineExpose({
