@@ -13,7 +13,6 @@ export default function useVxeTable(params: VxeGridProps, dataChange?: (data: an
     columnConfig: {
       minWidth: 100,
     },
-    data: [],
     ...params,
     rowConfig: {
       isHover: true,

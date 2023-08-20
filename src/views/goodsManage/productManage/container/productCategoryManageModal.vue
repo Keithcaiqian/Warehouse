@@ -17,11 +17,16 @@
       <vxe-grid ref="table$" v-bind="table">
         <!--将表单放在工具栏中-->
         <template #toolbar_buttons>
-          <n-button @click="handleAddCategoryModal" type="info">添加品类管理</n-button>
+          <n-button @click="handleOpenAddCategoryModal" type="info">添加品类管理</n-button>
         </template>
 
-        <template #options_default="{ row }">
-          <n-button size="small" type="error">删除</n-button>
+        <template #options_default="{ row }: any">
+          <n-popconfirm @positive-click="handleDelete(row.id)" @negative-click="() => {}">
+            <template #trigger>
+              <n-button size="small" type="error">删除</n-button>
+            </template>
+            确定删除吗？
+          </n-popconfirm>
         </template>
 
         <template #pager>
@@ -66,15 +71,15 @@
           label-placement="left"
           label-width="auto"
         >
-          <n-form-item label="商品品类" path="categoryName">
-            <cn-input v-model:value="formDataRef.categoryName" />
+          <n-form-item label="商品品类" path="name">
+            <cn-input v-model:value="formDataRef.name" />
           </n-form-item>
         </n-form>
 
         <template #footer>
           <n-space justify="end">
             <n-button @click="showAddModal = false">关闭</n-button>
-            <n-button type="info">确认</n-button>
+            <n-button @click="handleAddCategory" type="info">确认</n-button>
           </n-space>
         </template>
       </n-modal>
@@ -83,7 +88,6 @@
     <template #footer>
       <n-space justify="end">
         <n-button @click="showModal = false">关闭</n-button>
-        <n-button type="info">确认</n-button>
       </n-space>
     </template>
   </n-modal>
@@ -95,7 +99,14 @@
   import useVxeTable from '@/hooks/useVxeTable';
   import useForm from '@/hooks/useForm';
 
+  import { getProductCategoryList, addProductCategory, deleteProductCategory } from '@/api/product';
+
+  import { useMessage } from 'naive-ui';
+  const message = useMessage();
+
+  const listRef = ref([]); //列表所有数据
   const showModal = ref(false);
+  const loading = ref(false);
 
   const tablePage = reactive({
     total: 0,
@@ -106,6 +117,11 @@
   function handlePageChange({ currentPage, pageSize }) {
     tablePage.currentPage = currentPage;
     tablePage.pageSize = pageSize;
+    table.data = listRef.value.filter(
+      (_item, index) =>
+        index >= (tablePage.currentPage - 1) * tablePage.pageSize &&
+        index < tablePage.currentPage * tablePage.pageSize
+    );
   }
 
   const { table, table$ } = useVxeTable({
@@ -115,9 +131,14 @@
         buttons: 'toolbar_buttons',
       },
     },
+    seqConfig: {
+      seqMethod({ rowIndex }) {
+        return rowIndex + 1 + (tablePage.currentPage - 1) * 10;
+      },
+    },
     columns: [
       { type: 'seq', title: '序号', width: 60 },
-      { field: 'category', title: '商品品类' },
+      { field: 'name', title: '商品品类' },
       {
         field: 'options',
         title: '操作',
@@ -127,45 +148,107 @@
         },
       },
     ],
-    data: [
-      {
-        category: 'ceshi',
-      },
-    ],
+    data: [],
   });
 
   // 添加商品品类
   const showAddModal = ref(false);
   const formRef$ = ref();
 
-  const { formDataRef, reset } = useForm<{
-    categoryName: string | null;
+  const { formDataRef, reset, validate } = useForm<{
+    name: string | null;
   }>(
     {
-      categoryName: null,
+      name: null,
     },
     formRef$
   );
 
   const rules = {
-    categoryName: {
+    name: {
       required: true,
       message: '请输入商品品类名称',
-      trigger: ['blur'],
+      trigger: ['input', 'blur'],
     },
   };
 
-  function handleAddCategoryModal() {
+  function handleOpenAddCategoryModal() {
     reset();
     showAddModal.value = true;
   }
 
+  function handleAddCategory() {
+    validate().then(() => {
+      loading.value = true;
+      addProductCategory({
+        ...formDataRef.value,
+      })
+        .then(() => {
+          loading.value = false;
+          showAddModal.value = false;
+          message.success('添加成功');
+          getProductCategoryListApi();
+        })
+        .catch(() => {
+          loading.value = false;
+        });
+    });
+  }
+
+  // 删除商品品类
+  function handleDelete(id: string) {
+    table.loading = true;
+    deleteProductCategory(id)
+      .then(() => {
+        table.loading = false;
+        message.success('删除成功');
+        getProductCategoryListApi(tablePage.currentPage);
+      })
+      .catch(() => {
+        table.loading = false;
+      });
+  }
+
+  // 获取列表
+  function getProductCategoryListApi(currentPage = 1) {
+    table.loading = true;
+    getProductCategoryList()
+      .then((res) => {
+        table.loading = false;
+        listRef.value = res;
+        tablePage.total = res.length;
+
+        handlePageChange({ currentPage, pageSize: tablePage.pageSize });
+      })
+      .catch(() => {
+        table.loading = false;
+      });
+  }
+
   function open() {
     showModal.value = true;
+    getProductCategoryListApi();
   }
 
   defineExpose({
     open,
+    // 父组件获取列表 如果获取过则从缓存中获取，没有则调用接口
+    getCategoryList() {
+      return new Promise((resolve, reject) => {
+        if (listRef.value.length === 0) {
+          getProductCategoryList()
+            .then((res) => {
+              listRef.value = res;
+              resolve([...res]);
+            })
+            .catch(() => {
+              reject();
+            });
+        } else {
+          resolve([...listRef.value]);
+        }
+      });
+    },
   });
 </script>
 

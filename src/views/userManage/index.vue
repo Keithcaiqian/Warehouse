@@ -119,14 +119,7 @@
         },
       },
     ],
-    data: [
-      {
-        name: 'ceshi',
-        unit: 'ceshi',
-        update_time: 'ceshi',
-        create_time: 'ceshi',
-      },
-    ],
+    data: [],
   });
 
   function getUserListApi() {
