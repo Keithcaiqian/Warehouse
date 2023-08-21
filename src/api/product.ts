@@ -104,3 +104,24 @@ export function getProductPutList(params: any) {
     params,
   });
 }
+
+/**
+ * @description: 添加成品入库
+ */
+export function addProductPut(params: any) {
+  return http.request({
+    url: `/product/put/add`,
+    method: 'post',
+    params,
+  });
+}
+
+/**
+ * @description: 删除成品入库
+ */
+export function deleteProductPut(id: string) {
+  return http.request({
+    url: `/product/put/delete/${id}`,
+    method: 'delete',
+  });
+}

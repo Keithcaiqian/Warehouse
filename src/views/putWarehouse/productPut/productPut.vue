@@ -6,7 +6,7 @@
       <!--将表单放在工具栏中-->
       <template #toolbar_buttons>
         <n-space>
-          <n-button @click="openMaterialAddOrEditModal" type="info">添加入库</n-button>
+          <n-button @click="openAddProductPutModal" type="info">添加入库</n-button>
           <n-date-picker v-model:value="datetime" type="daterange" @confirm="handleChangeTime" />
         </n-space>
       </template>
@@ -27,8 +27,9 @@
       </template>
 
       <template #options_default="{ row }">
-        <n-button size="small" type="info">修改</n-button>
-        <n-button size="small" type="error" style="margin-left: 6px">删除</n-button>
+        <n-button @click="handleDelete(row.id)" :loading="loading" size="small" type="error"
+          >删除</n-button
+        >
       </template>
 
       <template #pager>
@@ -51,18 +52,39 @@
         />
       </template>
     </vxe-grid>
+
+    <AddProductPutModal
+      ref="addProductPutModal$"
+      :product="productList"
+      @confirm="
+        () => {
+          tablePage.currentPage = 1;
+          getProductPutListApi();
+        }
+      "
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, onMounted } from 'vue';
   import { Search } from '@vicons/ionicons5';
   import dayjs from 'dayjs';
 
   import useVxeTable from '@/hooks/useVxeTable';
+  import { useProductList } from '@/hooks/useProductList';
+  import useReconfirm from '@/components/ReConfirm/index';
 
-  import { getProductPutList } from '@/api/product';
-  import { onMounted } from 'vue';
+  import AddProductPutModal from './container/addProductPutModal.vue';
+
+  import { getProductPutList, deleteProductPut } from '@/api/product';
+  import { useMessage } from 'naive-ui';
+
+  const reconfirm = useReconfirm();
+  const message = useMessage();
+
+  // 商品列表
+  const { productList, productMap, getProductListApi } = useProductList();
 
   const tablePage = reactive({
     total: 0,
@@ -103,19 +125,41 @@
     },
     seqConfig: {
       seqMethod({ rowIndex }) {
-        return rowIndex + 1 + (tablePage.currentPage - 1) * 10;
+        return rowIndex + 1 + (tablePage.currentPage - 1) * tablePage.pageSize;
       },
     },
     columns: [
-      { type: 'seq', title: '序号', width: 60 },
-      { field: 'name', title: '原料名称' },
-      { field: 'unit', title: '单位' },
-      { field: 'update_time', title: '修改日期' },
-      { field: 'create_time', title: '创建日期' },
+      { type: 'seq', title: '序号', width: 60, resizable: true },
+      {
+        field: 'product_id',
+        title: '商品名称',
+        resizable: true,
+        formatter({ cellValue }) {
+          return productMap[cellValue]?.name || cellValue;
+        },
+      },
+      { field: 'code', title: '编码', width: 150, resizable: true },
+      { field: 'purchase_num', title: '进货数量', resizable: true },
+      { field: 'purchase_price', title: '进货单价（元）', resizable: true },
+      { field: 'purchase_amount', title: '进货总价（元）', resizable: true },
+      { field: 'advise_price', title: '建议零售价（元）', resizable: true },
+      { field: 'unit', title: '单位', resizable: true },
+      {
+        field: 'category_name',
+        title: '商品品类',
+        resizable: true,
+      },
+      {
+        field: 'remark',
+        title: '备注',
+        resizable: true,
+      },
+      { field: 'create_time', title: '创建日期', resizable: true },
       {
         field: 'options',
         title: '操作',
-        width: 220,
+        fixed: 'right',
+        width: 100,
         slots: {
           default: 'options_default',
         },
@@ -145,13 +189,43 @@
       });
   }
 
-  const materialAddOrEditModal$ = ref();
-  function openMaterialAddOrEditModal() {
-    materialAddOrEditModal$.value.open();
+  // 添加入库
+  const addProductPutModal$ = ref();
+  function openAddProductPutModal() {
+    addProductPutModal$.value.open();
+  }
+
+  // 删除入库
+  const loading = ref(false);
+
+  function handleDelete(id: string) {
+    reconfirm.show({
+      text: '确认删除',
+      confirm() {
+        loading.value = true;
+        deleteProductPut(id)
+          .then(() => {
+            loading.value = false;
+            message.success('删除成功！');
+            getProductPutListApi();
+          })
+          .catch(() => {
+            loading.value = false;
+          });
+      },
+    });
   }
 
   onMounted(() => {
-    getProductPutListApi();
+    table.loading = true;
+    getProductListApi()
+      .then(() => {
+        table.loading = false;
+        getProductPutListApi();
+      })
+      .catch(() => {
+        table.loading = false;
+      });
   });
 </script>
 

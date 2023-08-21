@@ -140,7 +140,7 @@
     },
     seqConfig: {
       seqMethod({ rowIndex }) {
-        return rowIndex + 1 + (tablePage.currentPage - 1) * 10;
+        return rowIndex + 1 + (tablePage.currentPage - 1) * tablePage.pageSize;
       },
     },
     columns: [
