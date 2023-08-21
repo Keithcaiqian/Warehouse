@@ -11,7 +11,7 @@
     bordered
     :mask-closable="false"
   >
-    <template #header> 添加成品入库 </template>
+    <template #header> 添加原料入库 </template>
 
     <n-form
       ref="formRef$"
@@ -20,10 +20,10 @@
       label-placement="left"
       label-width="auto"
     >
-      <n-form-item label="商品" path="name">
+      <n-form-item label="原料" path="name">
         <n-select
           v-model:value="formDataRef.name"
-          :options="product"
+          :options="material"
           filterable
           label-field="name"
           value-field="id"
@@ -57,14 +57,14 @@
 
   import useForm from '@/hooks/useForm';
   import { onlyNumber } from '@/utils/nativeAllowInput';
-  import { addProductPut } from '@/api/product';
+  import { addMaterialPut } from '@/api/material';
 
   import { useMessage } from 'naive-ui';
   const message = useMessage();
 
   const emit = defineEmits(['confirm']);
   defineProps<{
-    product: any[];
+    material: any[];
   }>();
 
   const showModal = ref(false);
@@ -119,7 +119,7 @@
   function handleConfirm() {
     validate().then(() => {
       loading.value = true;
-      addProductPut({
+      addMaterialPut({
         ...formDataRef.value,
         purchase_num: +formDataRef.value.purchase_num,
         purchase_price: +formDataRef.value.purchase_price,
