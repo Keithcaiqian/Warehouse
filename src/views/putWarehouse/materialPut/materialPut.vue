@@ -14,7 +14,7 @@
       <template #toolbar_tools>
         <n-input
           v-model:value="searchRef"
-          placeholder="搜索"
+          placeholder="搜索原料名称"
           style="width: 200px"
           @keyup.enter="handleSearch"
         >
@@ -85,7 +85,7 @@
   const message = useMessage();
 
   // 商品列表
-  const { materialList, materialMap, getMaterialListApi } = useMaterialList();
+  const { materialList, getMaterialListApi } = useMaterialList();
 
   const tablePage = reactive({
     total: 0,
@@ -132,12 +132,9 @@
     columns: [
       { type: 'seq', title: '序号', width: 60, resizable: true },
       {
-        field: 'material_id',
+        field: 'material_name',
         title: '原料名称',
         resizable: true,
-        formatter({ cellValue }) {
-          return materialMap[cellValue]?.name || cellValue;
-        },
       },
       { field: 'code', title: '编码', width: 150, resizable: true },
       { field: 'purchase_num', title: '进货数量', resizable: true },
@@ -234,4 +231,3 @@
     }
   }
 </style>
-@/hooks/useMaterialList

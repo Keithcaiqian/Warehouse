@@ -1,35 +1,56 @@
 <template>
   <div class="main-page">
-    <h1>成品入库</h1>
+    <n-h1>订单列表</n-h1>
 
     <vxe-grid ref="table$" v-bind="table">
       <!--将表单放在工具栏中-->
       <template #toolbar_buttons>
         <n-space>
-          <n-button @click="openAddProductPutModal" type="info">添加入库</n-button>
+          <n-button @click="openAddOrderModal" type="info">添加订单</n-button>
           <n-date-picker v-model:value="datetime" type="daterange" @confirm="handleChangeTime" />
         </n-space>
       </template>
 
       <template #toolbar_tools>
-        <n-input
-          v-model:value="searchRef"
-          placeholder="搜索商品名称"
-          style="width: 200px"
-          @keyup.enter="handleSearch"
-        >
-          <template #prefix>
-            <n-icon @click="handleSearch" size="18" color="#808695" style="cursor: pointer">
-              <Search />
-            </n-icon>
-          </template>
-        </n-input>
+        <n-space>
+          <cn-input v-model:value="state.buyer" placeholder="输入买家姓名" style="width: 150px" />
+          <cn-input
+            v-model:value="state.create_user"
+            placeholder="输入创建者姓名"
+            style="width: 150px"
+          />
+          <n-select
+            v-model:value="state.status"
+            :options="OrderStatusList"
+            label-field="name"
+            value-field="code"
+            placeholder="选择订单状态"
+            style="width: 150px"
+            clearable
+          />
+          <n-button @click="handleSearch" type="info">查询</n-button>
+        </n-space>
+      </template>
+
+      <template #status_default="{ row }">
+        <n-tag :type="row.status === OrderStatusEnum.COMPLETE ? 'success' : 'error'">
+          {{ OrderStatusMap[row.status] }}
+        </n-tag>
       </template>
 
       <template #options_default="{ row }">
-        <n-button @click="handleDelete(row.id)" :loading="loading" size="small" type="error"
-          >删除</n-button
-        >
+        <n-space>
+          <n-button @click="openOrderDetailModal(row.id)" size="small" type="success"
+            >详情</n-button
+          >
+          <n-button
+            v-if="row.status === OrderStatusEnum.COMPLETE"
+            @click="openOrderCancelModal(row.id)"
+            size="small"
+            type="error"
+            >取消订单</n-button
+          >
+        </n-space>
       </template>
 
       <template #pager>
@@ -53,13 +74,14 @@
       </template>
     </vxe-grid>
 
-    <AddProductPutModal
-      ref="addProductPutModal$"
-      :product="productList"
+    <OrderDetailModal ref="orderDetailModal$" />
+    <OrderCancelModal ref="orderCancelModal$" @confirm="getOrderListApi" />
+    <AddOrEditOrderModal
+      ref="addOrEditOrderModal$"
       @confirm="
         () => {
           tablePage.currentPage = 1;
-          getProductPutListApi();
+          getOrderListApi();
         }
       "
     />
@@ -68,23 +90,19 @@
 
 <script setup lang="ts">
   import { ref, reactive, onMounted } from 'vue';
-  import { Search } from '@vicons/ionicons5';
   import dayjs from 'dayjs';
 
   import useVxeTable from '@/hooks/useVxeTable';
-  import { useProductList } from '@/hooks/useProductList';
-  import useReconfirm from '@/components/ReConfirm/index';
+  import { OrderStatusEnum, OrderStatusMap, OrderStatusList } from '@/enums/orderStatusEnum';
+  import OrderDetailModal from './container/orderDetailModal.vue';
+  import OrderCancelModal from './container/orderCancelModal.vue';
+  import AddOrEditOrderModal from '../components/AddOrEditOrderModal.vue';
 
-  import AddProductPutModal from './container/addProductPutModal.vue';
+  import { getOrderList } from '@/api/order';
 
-  import { getProductPutList, deleteProductPut } from '@/api/product';
   import { useMessage } from 'naive-ui';
 
-  const reconfirm = useReconfirm();
   const message = useMessage();
-
-  // 商品列表
-  const { productList, getProductListApi } = useProductList();
 
   const tablePage = reactive({
     total: 0,
@@ -95,7 +113,7 @@
   function handlePageChange({ currentPage, pageSize }) {
     tablePage.currentPage = currentPage;
     tablePage.pageSize = pageSize;
-    getProductPutListApi();
+    getOrderListApi();
   }
 
   // 默认取了一年的时间戳
@@ -103,15 +121,21 @@
 
   function handleChangeTime() {
     tablePage.currentPage = 1;
-    getProductPutListApi();
+    getOrderListApi();
   }
 
   // 搜索
-  const searchRef = ref<null | string>(null);
-  let searchFilter: null | string = null;
+  const state = reactive<{
+    buyer: string | null;
+    create_user: string | null;
+    status: OrderStatusEnum.COMPLETE | OrderStatusEnum.CANCEL | null;
+  }>({
+    buyer: null,
+    create_user: null,
+    status: null,
+  });
 
   function handleSearch() {
-    searchFilter = searchRef.value;
     handlePageChange({ currentPage: 1, pageSize: tablePage.pageSize });
   }
 
@@ -130,33 +154,34 @@
     },
     columns: [
       { type: 'seq', title: '序号', width: 60, resizable: true },
+      { field: 'order_no', title: '订单号', width: 150, resizable: true },
       {
-        field: 'product_name',
-        title: '商品名称',
+        field: 'buyer',
+        title: '买家姓名',
         resizable: true,
       },
-      { field: 'code', title: '编码', width: 150, resizable: true },
-      { field: 'purchase_num', title: '进货数量', resizable: true },
-      { field: 'purchase_price', title: '进货单价（元）', resizable: true },
-      { field: 'purchase_amount', title: '进货总价（元）', resizable: true },
-      { field: 'advise_price', title: '建议零售价（元）', resizable: true },
-      { field: 'unit', title: '单位', resizable: true },
+      { field: 'buyer_phone', title: '买家手机号', resizable: true },
+      { field: 'sell_amount', title: '订单总额（元）', resizable: true },
       {
-        field: 'category_name',
-        title: '商品品类',
+        field: 'status',
+        title: '订单状态',
         resizable: true,
+        slots: {
+          default: 'status_default',
+        },
       },
       {
         field: 'remark',
         title: '备注',
         resizable: true,
       },
+      { field: 'create_user', title: '创建者', resizable: true },
       { field: 'create_time', title: '创建日期', resizable: true },
       {
         field: 'options',
         title: '操作',
         fixed: 'right',
-        width: 100,
+        width: 200,
         slots: {
           default: 'options_default',
         },
@@ -165,15 +190,15 @@
     data: [],
   });
 
-  function getProductPutListApi() {
+  function getOrderListApi() {
     table.loading = true;
-    getProductPutList({
+    getOrderList({
       currentPage: tablePage.currentPage,
       pageSize: tablePage.pageSize,
       params: {
         start_time: dayjs(datetime.value[0]).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
         end_time: dayjs(datetime.value[1]).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
-        keyword: searchFilter,
+        ...state,
       },
     })
       .then((res) => {
@@ -186,43 +211,29 @@
       });
   }
 
-  // 添加入库
-  const addProductPutModal$ = ref();
-  function openAddProductPutModal() {
-    addProductPutModal$.value.open();
+  // 查看详情
+  const orderDetailModal$ = ref();
+
+  function openOrderDetailModal(id: string) {
+    orderDetailModal$.value.open(id);
   }
 
-  // 删除入库
-  const loading = ref(false);
+  // 取消订单
+  const orderCancelModal$ = ref();
 
-  function handleDelete(id: string) {
-    reconfirm.show({
-      text: '确认删除',
-      confirm() {
-        loading.value = true;
-        deleteProductPut(id)
-          .then(() => {
-            loading.value = false;
-            message.success('删除成功！');
-            getProductPutListApi();
-          })
-          .catch(() => {
-            loading.value = false;
-          });
-      },
-    });
+  function openOrderCancelModal(id: string) {
+    orderCancelModal$.value.open(id);
+  }
+
+  // 添加订单
+  const addOrEditOrderModal$ = ref();
+
+  function openAddOrderModal() {
+    addOrEditOrderModal$.value.open();
   }
 
   onMounted(() => {
-    table.loading = true;
-    getProductListApi()
-      .then(() => {
-        table.loading = false;
-        getProductPutListApi();
-      })
-      .catch(() => {
-        table.loading = false;
-      });
+    getOrderListApi();
   });
 </script>
 
@@ -230,9 +241,5 @@
   .main-page {
     background-color: #fff;
     padding: 16px;
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
   }
 </style>

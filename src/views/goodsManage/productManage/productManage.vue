@@ -14,7 +14,7 @@
       <template #toolbar_tools>
         <n-input
           v-model:value="searchRef"
-          placeholder="搜索"
+          placeholder="搜索商品名称"
           style="width: 200px"
           @keyup.enter="handleSearch"
         >
