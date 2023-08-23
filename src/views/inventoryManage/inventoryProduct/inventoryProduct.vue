@@ -1,19 +1,21 @@
 <template>
   <div class="main-page">
-    <n-h1>原料管理</n-h1>
+    <n-h1>成品库存</n-h1>
 
     <vxe-grid ref="table$" v-bind="table">
-      <!--将表单放在工具栏中-->
       <template #toolbar_buttons>
-        <n-button @click="openMaterialAddOrEditModal(null)" type="info">添加原料</n-button>
+        <n-space>
+          <div class="price-text">总成本：</div><div class="price">{{ price }}</div>
+        </n-space>
       </template>
 
       <template #toolbar_tools>
         <n-input
           v-model:value="searchRef"
-          placeholder="搜索原料名称"
+          placeholder="搜索商品名称"
           style="width: 200px"
           @keyup.enter="handleSearch"
+          clearable
         >
           <template #prefix>
             <n-icon @click="handleSearch" size="18" color="#808695" style="cursor: pointer">
@@ -24,17 +26,9 @@
       </template>
 
       <template #options_default="{ row }">
-        <n-space>
-          <n-button @click="openMaterialAddOrEditModal(row)" size="small" type="info"
-            >修改</n-button
-          >
-          <n-popconfirm @positive-click="handleDeleteMeterial(row.id)" @negative-click="() => {}">
-            <template #trigger>
-              <n-button size="small" type="error">删除</n-button>
-            </template>
-            确定删除吗？
-          </n-popconfirm>
-        </n-space>
+        <n-button @click="openInventoryProductDetailModal(row.id)" size="small" type="info"
+          >详情</n-button
+        >
       </template>
 
       <template #pager>
@@ -58,28 +52,29 @@
       </template>
     </vxe-grid>
 
-    <MaterialAddOrEditModal
-      ref="materialAddOrEditModal$"
-      @confirm="
-        (type) => {
-          getMaterialManageListApi(type === 'add' ? 1 : tablePage.currentPage);
-        }
-      "
+    <InventoryProductDetailModal
+      ref="inventoryProductDetailModal$"
+      @confirm="getInventoryProductListApi(tablePage.currentPage)"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive, computed, onMounted } from 'vue';
   import { Search } from '@vicons/ionicons5';
   import useVxeTable from '@/hooks/useVxeTable';
+  import * as math from 'mathjs';
 
-  import MaterialAddOrEditModal from './container/materialAddOrEditModal.vue';
+  import InventoryProductDetailModal from './container/inventoryProductDetailModal.vue';
 
-  import { getMaterialManageList, deleteMaterial } from '@/api/material';
+  import { getInventoryProductList } from '@/api/inventory';
 
-  import { useMessage } from 'naive-ui';
-  const message = useMessage();
+  // 总成本
+  const price = computed(() =>
+    table.data?.reduce((accumulator, current) => {
+      return math.add(accumulator, current.purchase_amount);
+    }, 0)
+  );
 
   // 原料列表
   const originData = ref([]); //存一份原始列表数据
@@ -138,15 +133,17 @@
     },
     columns: [
       { type: 'seq', title: '序号', width: 60 },
-      { field: 'name', title: '原料名称' },
-      { field: 'unit', title: '单位' },
-      { field: 'update_time', title: '修改日期' },
-      { field: 'create_time', title: '创建日期' },
+      { field: 'name', title: '商品名称', resizable: true },
+      { field: 'category_name', title: '商品分类', resizable: true },
+      { field: 'num', title: '库存数量', resizable: true },
+      { field: 'advise_price', title: '建议零售价（元）', resizable: true },
+      { field: 'purchase_amount', title: '成本总额（元）', resizable: true },
+      { field: 'unit', title: '单位', resizable: true },
       {
         field: 'options',
         title: '操作',
         fixed: 'right',
-        width: 220,
+        width: 100,
         slots: {
           default: 'options_default',
         },
@@ -155,10 +152,10 @@
     data: [],
   });
 
-  function getMaterialManageListApi(currentPage = 1) {
+  function getInventoryProductListApi(currentPage = 1) {
     return new Promise((resolve, reject) => {
       table.loading = true;
-      getMaterialManageList()
+      getInventoryProductList()
         .then((res) => {
           table.loading = false;
           originData.value = res;
@@ -175,34 +172,14 @@
     });
   }
 
-  // 添加或编辑原料
-  const materialAddOrEditModal$ = ref();
-
-  function openMaterialAddOrEditModal(
-    data: null | {
-      [prop: string]: any;
-    }
-  ) {
-    materialAddOrEditModal$.value.open(data);
-  }
-
-  // 删除原料
-  function handleDeleteMeterial(id: string) {
-    table.loading = true;
-    deleteMaterial(id)
-      .then(() => {
-        table.loading = false;
-        getMaterialManageListApi(tablePage.currentPage).then(() => {
-          message.success('删除成功！');
-        });
-      })
-      .catch(() => {
-        table.loading = false;
-      });
+  // 打开详情
+  const inventoryProductDetailModal$ = ref();
+  function openInventoryProductDetailModal(id: string) {
+    inventoryProductDetailModal$.value.open(id);
   }
 
   onMounted(() => {
-    getMaterialManageListApi();
+    getInventoryProductListApi();
   });
 </script>
 
@@ -210,9 +187,12 @@
   .main-page {
     background-color: #fff;
     padding: 16px;
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
+    .price-text {
+      font-size: 22px;
+    }
+    .price {
+      font-size: 22px;
+      color: #f40;
     }
   }
 </style>

@@ -5,7 +5,7 @@
     size="small"
     preset="card"
     :style="{
-      width: '1000px',
+      width: '1100px',
     }"
     segmented
     bordered
@@ -38,7 +38,7 @@
             <div>{{ formDataRef.profit }}</div>
           </n-form-item>
           <n-form-item label="订单状态：">
-            <div>{{ OrderStatusMap[formDataRef.status] }}</div>
+            <div>{{ OrderStatusMap[formDataRef.status!] }}</div>
           </n-form-item>
           <n-form-item label="备注：">
             <div class="textarea">{{ formDataRef.remark }}</div>
@@ -47,7 +47,7 @@
             <div class="textarea">{{ formDataRef.cancel_reason }}</div>
           </n-form-item>
           <n-form-item label="商品列表：">
-            <div style="width: 750px">
+            <div style="width: 900px">
               <vxe-grid ref="table$" v-bind="table" />
             </div>
           </n-form-item>
@@ -106,7 +106,8 @@
   const { table, table$ } = useVxeTable({
     loading: false,
     columns: [
-      { field: 'product_name', title: '商品名称', width: 150, resizable: true },
+      { field: 'code', title: '商品编码', width: 150, resizable: true },
+      { field: 'name', title: '商品名称', width: 150, resizable: true },
       {
         field: 'out_num',
         title: '卖出数量',
