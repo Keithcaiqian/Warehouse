@@ -85,7 +85,7 @@ export function setProductAssembly(params: any) {
 }
 
 /**
- * @description: 编辑商品组装配置
+ * @description: 获取商品组装配置
  */
 export function getProductAssembly(id: string) {
   return http.request({

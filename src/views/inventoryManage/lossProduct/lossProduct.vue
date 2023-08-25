@@ -1,11 +1,11 @@
 <template>
   <div class="main-page">
-    <n-h1>成品库存</n-h1>
+    <n-h1>成品损耗</n-h1>
 
     <vxe-grid ref="table$" v-bind="table">
       <template #toolbar_buttons>
         <n-space>
-          <div class="price-text">总成本：</div><div class="price">{{ price }}</div>
+          <div class="price-text">损耗总成本：</div><div class="price">{{ price }}</div>
         </n-space>
       </template>
 
@@ -23,21 +23,6 @@
             </n-icon>
           </template>
         </n-input>
-      </template>
-
-      <template #options_default="{ row }">
-        <n-space>
-          <n-button @click="openInventoryProductDetailModal(row.id)" size="small" type="info"
-            >详情</n-button
-          >
-          <n-button
-            v-if="row.is_assemble === 'y'"
-            @click="openInventoryProductAssembleModal(row)"
-            size="small"
-            type="success"
-            >成品转化</n-button
-          >
-        </n-space>
       </template>
 
       <template #pager>
@@ -60,16 +45,6 @@
         />
       </template>
     </vxe-grid>
-
-    <InventoryProductDetailModal
-      ref="inventoryProductDetailModal$"
-      @confirm="getInventoryProductListApi(tablePage.currentPage)"
-    />
-
-    <InventoryProductAssembleModal
-      ref="inventoryProductAssembleModal$"
-      @confirm="getInventoryProductListApi(tablePage.currentPage)"
-    />
   </div>
 </template>
 
@@ -79,10 +54,7 @@
   import useVxeTable from '@/hooks/useVxeTable';
   import * as math from 'mathjs';
 
-  import InventoryProductDetailModal from './container/inventoryProductDetailModal.vue';
-  import InventoryProductAssembleModal from './container/inventoryProductAssembleModal.vue';
-
-  import { getInventoryProductList } from '@/api/inventory';
+  import { lossInventoryProduct } from '@/api/inventory';
 
   // 总成本
   const price = computed(() =>
@@ -91,7 +63,7 @@
     }, 0)
   );
 
-  // 原料列表
+  // 列表
   const originData = ref([]); //存一份原始列表数据
   const listRef = ref([]); //列表所有数据
 
@@ -147,30 +119,23 @@
       },
     },
     columns: [
-      { type: 'seq', title: '序号', width: 60 },
-      { field: 'name', title: '商品名称', resizable: true },
-      { field: 'category_name', title: '商品分类', resizable: true },
-      { field: 'num', title: '库存数量', resizable: true },
-      { field: 'advise_price', title: '建议零售价（元）', resizable: true },
-      { field: 'purchase_amount', title: '成本总额（元）', resizable: true },
+      { type: 'seq', title: '序号', width: 60, fixed: 'left' },
+      { field: 'name', title: '商品名称', resizable: true, fixed: 'left' },
+      { field: 'code', title: '编码', resizable: true },
+      { field: 'num', title: '损耗数量', resizable: true },
+      { field: 'purchase_price', title: '进货单价（元）', resizable: true },
+      { field: 'purchase_amount', title: '损耗总额（元）', resizable: true },
       { field: 'unit', title: '单位', resizable: true },
-      {
-        field: 'options',
-        title: '操作',
-        fixed: 'right',
-        width: 200,
-        slots: {
-          default: 'options_default',
-        },
-      },
+      { field: 'loss_reason', title: '损耗原因', resizable: true },
+      { field: 'create_time', title: '创建时间', resizable: true },
     ],
     data: [],
   });
 
-  function getInventoryProductListApi(currentPage = 1) {
+  function lossInventoryProductApi(currentPage = 1) {
     return new Promise((resolve, reject) => {
       table.loading = true;
-      getInventoryProductList()
+      lossInventoryProduct()
         .then((res) => {
           table.loading = false;
           originData.value = res;
@@ -187,21 +152,8 @@
     });
   }
 
-  // 打开详情
-  const inventoryProductDetailModal$ = ref();
-  function openInventoryProductDetailModal(id: string) {
-    inventoryProductDetailModal$.value.open(id);
-  }
-
-  // 成品组装
-  const inventoryProductAssembleModal$ = ref();
-
-  function openInventoryProductAssembleModal(data) {
-    inventoryProductAssembleModal$.value.open(data);
-  }
-
   onMounted(() => {
-    getInventoryProductListApi();
+    lossInventoryProductApi();
   });
 </script>
 

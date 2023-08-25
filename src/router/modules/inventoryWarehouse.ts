@@ -42,6 +42,22 @@ const routes: Array<RouteRecordRaw> = [
         },
         component: () => import('@/views/inventoryManage/inventoryMaterial/inventoryMaterial.vue'),
       },
+      {
+        path: 'lossProduct',
+        name: `${routeName}_lossProduct`,
+        meta: {
+          title: '成品损耗',
+        },
+        component: () => import('@/views/inventoryManage/lossProduct/lossProduct.vue'),
+      },
+      {
+        path: 'lossMaterial',
+        name: `${routeName}_lossMaterial`,
+        meta: {
+          title: '原料损耗',
+        },
+        component: () => import('@/views/inventoryManage/lossMaterial/lossMaterial.vue'),
+      },
     ],
   },
 ];

@@ -11,7 +11,7 @@ export function getInventoryProductList() {
 }
 
 /**
- * @description: 获取库存单个成品品详情列表
+ * @description: 获取库存中单个成品库存列表
  */
 export function getInventoryProductDetail(id: string) {
   return http.request({
@@ -38,5 +38,67 @@ export function editInventoryProduct(params: any) {
     url: `/inventory/product/edit`,
     method: 'post',
     params,
+  });
+}
+
+/**
+ * @description: 成品损耗列表
+ */
+export function lossInventoryProduct() {
+  return http.request({
+    url: `/inventory/product/loss`,
+    method: 'get',
+  });
+}
+
+/**
+ * @description: 获取库存原料列表
+ */
+export function getInventoryMaterialList() {
+  return http.request({
+    url: `/inventory/material/list`,
+    method: 'get',
+  });
+}
+
+/**
+ * @description: 获取库存中单个原料库存列表
+ */
+export function getInventoryMaterialDetail(id: string) {
+  return http.request({
+    url: `/inventory/material/detail/${id}`,
+    method: 'get',
+  });
+}
+
+/**
+ * @description: 根据原料ids获取原料库存
+ */
+export function getInventoryMaterialListByIds(params: any) {
+  return http.request({
+    url: `/inventory/material/list/ids`,
+    method: 'post',
+    params,
+  });
+}
+
+/**
+ * @description: 设置原料损耗数量
+ */
+export function editInventoryMaterial(params: any) {
+  return http.request({
+    url: `/inventory/material/edit`,
+    method: 'post',
+    params,
+  });
+}
+
+/**
+ * @description: 原料损耗列表
+ */
+export function lossInventoryMaterial() {
+  return http.request({
+    url: `/inventory/material/loss`,
+    method: 'get',
   });
 }
