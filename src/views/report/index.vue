@@ -196,6 +196,7 @@
         },
       },
       { field: 'create_time', title: '创建时间', resizable: true },
+      { field: 'create_user', title: '销售者', resizable: true },
       { field: 'profit', title: '总利润', resizable: true, fixed: 'right' },
     ],
     data: [],
