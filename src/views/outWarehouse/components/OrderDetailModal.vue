@@ -46,6 +46,9 @@
           <n-form-item v-if="formDataRef.status === OrderStatusEnum.CANCEL" label="取消原因：">
             <div class="textarea">{{ formDataRef.cancel_reason }}</div>
           </n-form-item>
+          <n-form-item v-if="formDataRef.status === OrderStatusEnum.REJECT" label="拒绝原因：">
+            <div class="textarea">{{ formDataRef.reject_reason }}</div>
+          </n-form-item>
           <n-form-item label="商品列表：">
             <div style="width: 900px">
               <vxe-grid ref="table$" v-bind="table" />
@@ -53,11 +56,22 @@
           </n-form-item>
         </n-form>
       </n-spin>
+
+      <OrderCheckModal ref="orderCheckModal$" @confirm="handleConfirm" />
     </div>
 
     <template #footer>
       <n-space justify="end">
         <n-button @click="showModal = false">关闭</n-button>
+        <n-button
+          v-if="
+            formDataRef.status === OrderStatusEnum.WAIT ||
+            formDataRef.status === OrderStatusEnum.REJECT
+          "
+          @click="openOrderCheckModal"
+          type="info"
+          >审核</n-button
+        >
       </n-space>
     </template>
   </n-modal>
@@ -68,18 +82,19 @@
 
   import useVxeTable from '@/hooks/useVxeTable';
   import useForm from '@/hooks/useForm';
-  import { getOrderDetail } from '@/api/order';
-
   import { OrderStatusEnum, OrderStatusMap } from '@/enums/orderStatusEnum';
 
-  defineProps<{
-    material: any[];
-  }>();
+  import OrderCheckModal from './OrderCheckModal.vue';
+
+  import { getOrderDetail } from '@/api/order';
+
+  const emit = defineEmits(['confirm']);
 
   const showModal = ref(false);
   const loading = ref(false);
 
   const { formDataRef, reset, setFormData } = useForm<{
+    id: string | null;
     order_no: string | null;
     buyer: string | null;
     buyer_phone: string | null;
@@ -89,8 +104,10 @@
     status: string | null;
     remark: string | null;
     cancel_reason: string | null;
+    reject_reason: string | null;
     create_user: string | null;
   }>({
+    id: null,
     order_no: null,
     buyer: null,
     buyer_phone: null,
@@ -100,6 +117,7 @@
     status: null,
     remark: null,
     cancel_reason: null,
+    reject_reason: null,
     create_user: null,
   });
 
@@ -121,13 +139,9 @@
     data: [],
   });
 
-  function open(id: string) {
-    reset();
-    table.data = [];
-    showModal.value = true;
-
+  function getOrderDetailApi() {
     loading.value = true;
-    getOrderDetail(id)
+    getOrderDetail(formDataRef.value.id!)
       .then((res) => {
         loading.value = false;
         setFormData(res);
@@ -138,7 +152,26 @@
       });
   }
 
-  function handleConfirm() {}
+  function open(id: string) {
+    reset();
+    formDataRef.value.id = id;
+    table.data = [];
+    showModal.value = true;
+
+    getOrderDetailApi();
+  }
+
+  // 修改订单状态
+  const orderCheckModal$ = ref();
+
+  function openOrderCheckModal() {
+    orderCheckModal$.value.open(formDataRef.value.id);
+  }
+
+  function handleConfirm() {
+    emit('confirm');
+    getOrderDetailApi();
+  }
 
   defineExpose({
     open,

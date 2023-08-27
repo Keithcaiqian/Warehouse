@@ -77,7 +77,7 @@
   import { ref, reactive, computed, onMounted } from 'vue';
   import { Search } from '@vicons/ionicons5';
   import useVxeTable from '@/hooks/useVxeTable';
-  import * as math from 'mathjs';
+  import NP from 'number-precision';
 
   import InventoryProductDetailModal from './container/inventoryProductDetailModal.vue';
   import InventoryProductAssembleModal from './container/inventoryProductAssembleModal.vue';
@@ -87,7 +87,7 @@
   // 总成本
   const price = computed(() =>
     table.data?.reduce((accumulator, current) => {
-      return math.add(accumulator, current.purchase_amount);
+      return NP.plus(accumulator, current.purchase_amount);
     }, 0)
   );
 

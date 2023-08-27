@@ -1,11 +1,11 @@
 import { http } from '@/utils/http/axios';
 
 /**
- * @description: 获取成品库存列表
+ * @description: 根据商品名称获取成品库存列表
  */
 export function getInventoryProductList() {
   return http.request({
-    url: '/inventory/product/list',
+    url: '/inventory/product/list/productId',
     method: 'get',
   });
 }
@@ -16,6 +16,16 @@ export function getInventoryProductList() {
 export function getInventoryProductDetail(id: string) {
   return http.request({
     url: `/inventory/product/detail/${id}`,
+    method: 'get',
+  });
+}
+
+/**
+ * @description: 获取库存中成品库存列表
+ */
+export function getInventoryProductListAll() {
+  return http.request({
+    url: `/inventory/product/list/all`,
     method: 'get',
   });
 }
@@ -56,7 +66,7 @@ export function lossInventoryProduct() {
  */
 export function getInventoryMaterialList() {
   return http.request({
-    url: `/inventory/material/list`,
+    url: `/inventory/material/list/materialId`,
     method: 'get',
   });
 }

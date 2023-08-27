@@ -33,7 +33,10 @@
       </template>
 
       <template #status_default="{ row }">
-        <n-tag :type="row.status === OrderStatusEnum.COMPLETE ? 'success' : 'error'">
+        <n-tag
+          @click="openOrderStatusHistoryModal"
+          :type="row.status === OrderStatusEnum.COMPLETE ? 'success' : 'error'"
+        >
           {{ OrderStatusMap[row.status] }}
         </n-tag>
       </template>
@@ -76,6 +79,7 @@
 
     <OrderDetailModal ref="orderDetailModal$" />
     <OrderCancelModal ref="orderCancelModal$" @confirm="getOrderListApi" />
+    <OrderStatusHistory ref="orderStatusHistory$" />
     <AddOrEditOrderModal
       ref="addOrEditOrderModal$"
       @confirm="
@@ -94,15 +98,12 @@
 
   import useVxeTable from '@/hooks/useVxeTable';
   import { OrderStatusEnum, OrderStatusMap, OrderStatusList } from '@/enums/orderStatusEnum';
-  import OrderDetailModal from './container/orderDetailModal.vue';
+  import OrderDetailModal from '../components/OrderDetailModal.vue';
   import OrderCancelModal from './container/orderCancelModal.vue';
   import AddOrEditOrderModal from '../components/AddOrEditOrderModal.vue';
+  import OrderStatusHistory from '../components/OrderStatusHistory.vue';
 
   import { getOrderList } from '@/api/order';
-
-  import { useMessage } from 'naive-ui';
-
-  const message = useMessage();
 
   const tablePage = reactive({
     total: 0,
@@ -230,6 +231,13 @@
 
   function openAddOrderModal() {
     addOrEditOrderModal$.value.open();
+  }
+
+  // 订单状态历史
+  const orderStatusHistory$ = ref();
+
+  function openOrderStatusHistoryModal(id: string) {
+    orderStatusHistory$.value.open(id);
   }
 
   onMounted(() => {

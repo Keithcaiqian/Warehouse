@@ -9,7 +9,7 @@ export const OrderStatusMap = {
   [OrderStatusEnum.COMPLETE]: '已完成',
   [OrderStatusEnum.CANCEL]: '已取消',
   [OrderStatusEnum.WAIT]: '待审核',
-  [OrderStatusEnum.REJECT]: '被拒绝',
+  [OrderStatusEnum.REJECT]: '已拒绝',
 };
 
 // 订单列表

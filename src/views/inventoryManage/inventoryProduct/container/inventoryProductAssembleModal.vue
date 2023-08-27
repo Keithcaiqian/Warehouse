@@ -11,7 +11,7 @@
     bordered
     :mask-closable="false"
   >
-    <template #header>{{ product.name }}</template>
+    <template #header>成品转化：{{ product.name }}</template>
     <div class="main-page">
       <n-spin :show="loading">
         <vxe-grid ref="materialTable$" v-bind="materialTable">
