@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Layout } from '@/router/constant';
-import { DashboardOutlined } from '@vicons/antd';
+import { DatabaseFilled } from '@vicons/antd';
 import { renderIcon } from '@/utils/index';
 
 const routeName = 'putWarehouse';
@@ -22,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: '入库',
-      icon: renderIcon(DashboardOutlined),
+      icon: renderIcon(DatabaseFilled),
       sort: 2,
     },
     children: [

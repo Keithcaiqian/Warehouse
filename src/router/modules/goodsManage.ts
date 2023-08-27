@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Layout } from '@/router/constant';
-import { DashboardOutlined } from '@vicons/antd';
+import { AppstoreOutlined } from '@vicons/antd';
 import { renderIcon } from '@/utils/index';
 
 const routeName = 'goodsManage';
@@ -22,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: '商品管理',
-      icon: renderIcon(DashboardOutlined),
+      icon: renderIcon(AppstoreOutlined),
       sort: 1,
     },
     children: [

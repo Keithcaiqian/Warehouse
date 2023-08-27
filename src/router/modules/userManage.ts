@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Layout } from '@/router/constant';
-import { DashboardOutlined } from '@vicons/antd';
+import { TeamOutlined } from '@vicons/antd';
 import { renderIcon } from '@/utils/index';
 
 const routeName = 'userManage';
@@ -22,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Layout,
     redirect: '/userManage/index',
     meta: {
-      icon: renderIcon(DashboardOutlined),
+      icon: renderIcon(TeamOutlined),
       sort: 10,
       isRoot: true,
       activeMenu: 'userManage_index',

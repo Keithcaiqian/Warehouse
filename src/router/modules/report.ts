@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Layout } from '@/router/constant';
-import { DashboardOutlined } from '@vicons/antd';
+import { PayCircleOutlined } from '@vicons/antd';
 import { renderIcon } from '@/utils/index';
 
 const routeName = 'report';
@@ -22,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Layout,
     redirect: '/report/index',
     meta: {
-      icon: renderIcon(DashboardOutlined),
+      icon: renderIcon(PayCircleOutlined),
       sort: 5,
       isRoot: true,
       activeMenu: 'report_index',

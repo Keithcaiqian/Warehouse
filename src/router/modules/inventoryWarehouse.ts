@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Layout } from '@/router/constant';
-import { DashboardOutlined } from '@vicons/antd';
+import { GoldOutlined } from '@vicons/antd';
 import { renderIcon } from '@/utils/index';
 
 const routeName = 'inventoryManage';
@@ -22,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: '库存管理',
-      icon: renderIcon(DashboardOutlined),
+      icon: renderIcon(GoldOutlined),
       sort: 4,
     },
     children: [

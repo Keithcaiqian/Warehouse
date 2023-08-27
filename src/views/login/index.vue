@@ -3,9 +3,7 @@
     <div class="view-account-header"></div>
     <div class="view-account-container">
       <div class="view-account-top">
-        <div class="view-account-top-logo">
-          <img :src="websiteConfig.loginImage" alt="" />
-        </div>
+        <div class="view-account-top-logo">出入库系统</div>
         <div class="view-account-top-desc">{{ websiteConfig.loginDesc }}</div>
       </div>
       <div class="view-account-form">
@@ -173,6 +171,14 @@
     &-top {
       padding: 32px 0;
       text-align: center;
+
+      &-logo {
+        font-size: 48px;
+        background: linear-gradient(315deg, #3d14e8 25%, #db1e05);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
 
       &-desc {
         font-size: 14px;

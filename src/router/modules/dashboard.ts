@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Layout } from '@/router/constant';
-import { DashboardOutlined } from '@vicons/antd';
+import { HomeFilled } from '@vicons/antd';
 import { renderIcon } from '@/utils/index';
 
 const routeName = 'dashboard';
@@ -22,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Layout,
     redirect: '/dashboard/index',
     meta: {
-      icon: renderIcon(DashboardOutlined),
+      icon: renderIcon(HomeFilled),
       sort: 0,
       isRoot: true,
       activeMenu: 'dashboard_index',
