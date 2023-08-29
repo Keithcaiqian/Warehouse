@@ -47,7 +47,7 @@
 
   import useForm from '@/hooks/useForm';
   import { onlyNumber } from '@/utils/nativeAllowInput';
-  import { RoleEnum, roleList } from '@/enums/roleEnum/';
+  import { RoleEnum, roleList } from '@/enums/roleEnum';
 
   import { changeUserInfo } from '@/api/system/user';
 
@@ -78,11 +78,6 @@
       required: true,
       message: '请选择角色',
       trigger: ['change'],
-    },
-    phone: {
-      required: true,
-      message: '请输入手机号',
-      trigger: ['blur'],
     },
   };
 

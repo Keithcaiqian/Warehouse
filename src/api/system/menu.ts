@@ -9,15 +9,3 @@ export function adminMenus() {
     method: 'GET',
   });
 }
-
-/**
- * 获取tree菜单列表
- * @param params
- */
-export function getMenuList(params?) {
-  return http.request({
-    url: '/menu/list',
-    method: 'GET',
-    params,
-  });
-}
