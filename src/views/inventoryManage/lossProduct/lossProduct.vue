@@ -125,7 +125,6 @@
       { field: 'num', title: '损耗数量', resizable: true },
       { field: 'purchase_price', title: '进货单价（元）', resizable: true },
       { field: 'purchase_amount', title: '损耗总额（元）', resizable: true },
-      { field: 'unit', title: '单位', resizable: true },
       { field: 'loss_reason', title: '损耗原因', resizable: true },
       { field: 'create_time', title: '创建时间', resizable: true },
     ],

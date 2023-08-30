@@ -26,12 +26,6 @@
         </n-input>
       </template>
 
-      <template #options_default="{ row }">
-        <n-button @click="handleDelete(row.id)" :loading="loading" size="small" type="error"
-          >删除</n-button
-        >
-      </template>
-
       <template #pager>
         <!--使用 pager 插槽-->
         <vxe-pager
@@ -73,15 +67,10 @@
 
   import useVxeTable from '@/hooks/useVxeTable';
   import { useProductList } from '@/hooks/useProductList';
-  import useReconfirm from '@/components/ReConfirm/index';
 
   import AddProductPutModal from './container/addProductPutModal.vue';
 
-  import { getProductPutList, deleteProductPut } from '@/api/product';
-  import { useMessage } from 'naive-ui';
-
-  const reconfirm = useReconfirm();
-  const message = useMessage();
+  import { getProductPutList } from '@/api/product';
 
   // 商品列表
   const { productList, getProductListApi } = useProductList();
@@ -152,15 +141,6 @@
         resizable: true,
       },
       { field: 'create_time', title: '创建日期', resizable: true },
-      {
-        field: 'options',
-        title: '操作',
-        fixed: 'right',
-        width: 100,
-        slots: {
-          default: 'options_default',
-        },
-      },
     ],
     data: [],
   });
@@ -190,27 +170,6 @@
   const addProductPutModal$ = ref();
   function openAddProductPutModal() {
     addProductPutModal$.value.open();
-  }
-
-  // 删除入库
-  const loading = ref(false);
-
-  function handleDelete(id: string) {
-    reconfirm.show({
-      text: '确认删除',
-      confirm() {
-        loading.value = true;
-        deleteProductPut(id)
-          .then(() => {
-            loading.value = false;
-            message.success('删除成功！');
-            getProductPutListApi();
-          })
-          .catch(() => {
-            loading.value = false;
-          });
-      },
-    });
   }
 
   onMounted(() => {

@@ -111,7 +111,7 @@
     },
   };
 
-  function open(data) {
+  function open() {
     reset();
     showModal.value = true;
   }
@@ -121,8 +121,8 @@
       loading.value = true;
       addProductPut({
         ...formDataRef.value,
-        purchase_num: +formDataRef.value.purchase_num,
-        purchase_price: +formDataRef.value.purchase_price,
+        purchase_num: +formDataRef.value.purchase_num!,
+        purchase_price: +formDataRef.value.purchase_price!,
       })
         .then(() => {
           loading.value = false;

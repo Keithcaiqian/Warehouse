@@ -115,13 +115,3 @@ export function addProductPut(params: any) {
     params,
   });
 }
-
-/**
- * @description: 删除成品入库
- */
-export function deleteProductPut(id: string) {
-  return http.request({
-    url: `/product/put/delete/${id}`,
-    method: 'delete',
-  });
-}
