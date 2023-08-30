@@ -90,6 +90,7 @@ const transform: AxiosTransform = {
     if (code === ResultEnum.SUCCESS) {
       return result;
     }
+    console.log('code', code);
     // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
     let errorMsg = message;
     switch (code) {
@@ -99,6 +100,7 @@ const transform: AxiosTransform = {
         break;
       // 登录超时
       case ResultEnum.TIMEOUT:
+      case ResultEnum.DISABLE:
         const LoginName = PageEnum.BASE_LOGIN_NAME;
         const LoginPath = PageEnum.BASE_LOGIN;
         if (router.currentRoute.value?.name === LoginName) return;
