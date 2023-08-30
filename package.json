@@ -1,11 +1,6 @@
 {
-  "name": "naive-ui-admin",
-  "version": "1.9.0",
-  "author": {
-    "name": "Ahjung",
-    "email": "735878602@qq.com",
-    "url": "https://github.com/jekip/naive-ui-admin"
-  },
+  "name": "template",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "bootstrap": "pnpm install",

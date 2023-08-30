@@ -47,7 +47,7 @@ export default [
     },
   },
   {
-    url: '/api/admin_info',
+    url: '/api/user/getUserInfo',
     timeout: 1000,
     method: 'get',
     response: () => {

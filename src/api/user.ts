@@ -13,17 +13,6 @@ export interface BasicPageParams {
 }
 
 /**
- * @description: 注册用户
- */
-export function registerUser(params) {
-  return http.request({
-    url: '/admin/register',
-    method: 'POST',
-    params,
-  });
-}
-
-/**
  * @description: 获取用户信息
  */
 export function getUserInfo() {
@@ -34,22 +23,12 @@ export function getUserInfo() {
 }
 
 /**
- * @description: 验证用户
- */
-export function userVerify() {
-  return http.request({
-    url: '/user/verify',
-    method: 'POST',
-  });
-}
-
-/**
  * @description: 用户登录
  */
 export function login(params) {
   return http.request<BasicResponseModel>(
     {
-      url: '/common/login',
+      url: '/login',
       method: 'POST',
       params,
     },
@@ -67,26 +46,5 @@ export function changePassword(params) {
     url: `/user/edit/password`,
     method: 'POST',
     params,
-  });
-}
-
-/**
- * @description: 修改用户信息
- */
-export function changeUserInfo(params) {
-  return http.request({
-    url: `/admin/edit/info`,
-    method: 'POST',
-    params,
-  });
-}
-
-/**
- * @description: 获取用户列表
- */
-export function getUserList() {
-  return http.request({
-    url: '/admin/list',
-    method: 'GET',
   });
 }

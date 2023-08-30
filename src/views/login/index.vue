@@ -3,7 +3,7 @@
     <div class="view-account-header"></div>
     <div class="view-account-container">
       <div class="view-account-top">
-        <div class="view-account-top-logo">出入库系统</div>
+        <div class="view-account-top-logo">template</div>
         <div class="view-account-top-desc">{{ websiteConfig.loginDesc }}</div>
       </div>
       <div class="view-account-form">

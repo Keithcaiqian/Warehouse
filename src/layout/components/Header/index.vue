@@ -72,7 +72,7 @@
       </n-breadcrumb>
     </div>
     <div class="layout-header-right">
-      <!-- <div
+      <div
         class="layout-header-trigger layout-header-trigger-min"
         v-for="item in iconList"
         :key="item.icon"
@@ -85,7 +85,7 @@
           </template>
           <span>{{ item.tips }}</span>
         </n-tooltip>
-      </div> -->
+      </div>
       <!--切换全屏-->
       <div class="layout-header-trigger layout-header-trigger-min">
         <n-tooltip placement="bottom">
@@ -111,7 +111,7 @@
         </n-dropdown>
       </div>
       <!--设置-->
-      <!-- <div class="layout-header-trigger layout-header-trigger-min" @click="openSetting">
+      <div class="layout-header-trigger layout-header-trigger-min" @click="openSetting">
         <n-tooltip placement="bottom-end">
           <template #trigger>
             <n-icon size="18" style="font-weight: bold">
@@ -120,7 +120,7 @@
           </template>
           <span>项目配置</span>
         </n-tooltip>
-      </div> -->
+      </div>
     </div>
   </div>
   <!--项目配置-->
@@ -309,9 +309,9 @@
       //头像下拉菜单
       const avatarSelect = (key) => {
         switch (key) {
-          // case 1:
-          //   router.push({ name: 'Setting' });
-          //   break;
+          case 1:
+            router.push({ name: 'Setting' });
+            break;
           case 2:
             doLogout();
             break;
