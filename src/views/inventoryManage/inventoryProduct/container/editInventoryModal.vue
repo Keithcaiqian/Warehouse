@@ -93,8 +93,8 @@
 
   function handleConfirm() {
     const editData: any[] = [];
-    for (let i = 0; i < table.data.length; i++) {
-      const data = table.data[i];
+    for (let i = 0; i < table.data!.length; i++) {
+      const data = table.data![i];
       if (data.loss_num) {
         if (data.loss_num > data.num) {
           return message.error('损耗数量不能超过库存数量');

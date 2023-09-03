@@ -78,6 +78,7 @@
   import { Search } from '@vicons/ionicons5';
   import useVxeTable from '@/hooks/useVxeTable';
   import NP from 'number-precision';
+  import priceTrans from '@/utils/priceTransform';
 
   import InventoryProductDetailModal from './container/inventoryProductDetailModal.vue';
   import InventoryProductAssembleModal from './container/inventoryProductAssembleModal.vue';
@@ -85,11 +86,14 @@
   import { getInventoryProductList } from '@/api/inventory';
 
   // 总成本
-  const price = computed(() =>
-    table.data?.reduce((accumulator, current) => {
-      return NP.plus(accumulator, current.purchase_amount);
-    }, 0)
-  );
+  const price = computed(() => {
+    const total =
+      table.data?.reduce((accumulator, current) => {
+        return NP.plus(accumulator, current.purchase_amount);
+      }, 0) || 0;
+
+    return NP.divide(total, 100);
+  });
 
   // 原料列表
   const originData = ref([]); //存一份原始列表数据
@@ -151,8 +155,22 @@
       { field: 'name', title: '商品名称', resizable: true },
       { field: 'category_name', title: '商品分类', resizable: true },
       { field: 'num', title: '库存数量', resizable: true },
-      { field: 'advise_price', title: '建议零售价（元）', resizable: true },
-      { field: 'purchase_amount', title: '成本总额（元）', resizable: true },
+      {
+        field: 'advise_price',
+        title: '建议零售价（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_amount',
+        title: '成本总额（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       { field: 'unit', title: '单位', resizable: true },
       {
         field: 'options',

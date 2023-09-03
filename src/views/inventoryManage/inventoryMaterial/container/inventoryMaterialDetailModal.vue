@@ -33,7 +33,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import useVxeTable from '@/hooks/useVxeTable';
-
+  import priceTrans from '@/utils/priceTransform';
   import EditInventoryModal from './editInventoryModal.vue';
 
   import { getInventoryMaterialDetail } from '@/api/inventory';
@@ -48,8 +48,22 @@
       { field: 'code', title: '编码', resizable: true },
       { field: 'name', title: '原料名称', resizable: true },
       { field: 'num', title: '库存数量', resizable: true },
-      { field: 'purchase_price', title: '进货单价（元）', resizable: true },
-      { field: 'purchase_amount', title: '成本总额（元）', resizable: true },
+      {
+        field: 'purchase_price',
+        title: '进货单价（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_amount',
+        title: '成本总额（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       { field: 'unit', title: '单位', resizable: true },
       { field: 'create_time', title: '入库时间', resizable: true },
     ],

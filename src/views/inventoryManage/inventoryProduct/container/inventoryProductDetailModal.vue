@@ -52,12 +52,11 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import useVxeTable from '@/hooks/useVxeTable';
-
+  import priceTrans from '@/utils/priceTransform';
   import InventoryProductCompositionModal from './inventoryProductCompositionModal.vue';
   import EditInventoryModal from './editInventoryModal.vue';
 
   import { getInventoryProductDetail } from '@/api/inventory';
-  import { useMessage } from 'naive-ui';
   const emit = defineEmits(['confirm']);
 
   const showModal = ref(false);
@@ -78,9 +77,30 @@
         },
       },
       { field: 'num', title: '库存数量', resizable: true },
-      { field: 'advise_price', title: '建议零售价（元）', resizable: true },
-      { field: 'purchase_price', title: '进货单价（元）', resizable: true },
-      { field: 'purchase_amount', title: '成本总额（元）', resizable: true },
+      {
+        field: 'advise_price',
+        title: '建议零售价（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_price',
+        title: '进货单价（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_amount',
+        title: '成本总额（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       { field: 'unit', title: '单位', resizable: true },
       { field: 'create_time', title: '入库时间', resizable: true },
       {
