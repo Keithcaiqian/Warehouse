@@ -97,7 +97,7 @@
     repassword: {
       required: true,
       trigger: ['blur', 'password-input'],
-      validator(rule: any, value: string) {
+      validator(_rule: any, value: string) {
         if (!value) {
           return new Error('请输入要修改用户的新密码');
         } else if (value !== formDataRef.value.user_password) {

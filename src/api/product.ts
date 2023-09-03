@@ -34,7 +34,7 @@ export function deleteProductCategory(id: string) {
 /**
  * @description: 获取成品管理列表
  */
-export function getProductManageList(is_assemble: 'y' | 'n' = 'n') {
+export function getProductManageList(is_assemble: 'y' | 'n' | null = null) {
   return http.request({
     url: `/product/manage/list?is_assemble=${is_assemble}`,
     method: 'get',

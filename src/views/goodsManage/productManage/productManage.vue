@@ -6,8 +6,8 @@
       <!--将表单放在工具栏中-->
       <template #toolbar_buttons>
         <n-space>
-          <n-button @click="openProductCategoryManageModal" type="info">商品品类管理</n-button>
           <n-button @click="openAddOrEditProductModal(null)" type="info">添加成品</n-button>
+          <n-button @click="openProductCategoryManageModal" type="warning">商品品类管理</n-button>
         </n-space>
       </template>
 
@@ -93,6 +93,7 @@
   import { ref, reactive, onMounted } from 'vue';
   import { Search } from '@vicons/ionicons5';
   import useVxeTable from '@/hooks/useVxeTable';
+  import priceTrans from '@/utils/priceTransform';
 
   import ProductAddOrEditModal from './container/productAddOrEditModal.vue';
   import ProductCategoryManageModal from './container/productCategoryManageModal.vue';
@@ -161,17 +162,18 @@
     columns: [
       { type: 'seq', title: '序号', width: 60 },
       { field: 'name', title: '商品名称' },
-      { field: 'advise_price', title: '建议零售价（元）' },
+      {
+        field: 'advise_price',
+        title: '建议零售价（元）',
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       { field: 'unit', title: '单位' },
       {
         field: 'category_name',
         title: '商品品类',
-        filters: [
-          { label: '前端开发', value: '前端' },
-          { label: '后端开发', value: '后端' },
-          { label: '测试', value: '测试' },
-          { label: '程序员鼓励师', value: '程序员鼓励师' },
-        ],
+        filters: [],
       },
       { field: 'update_time', title: '修改日期' },
       { field: 'create_time', title: '创建日期' },

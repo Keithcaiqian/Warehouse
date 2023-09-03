@@ -20,9 +20,9 @@
       label-placement="left"
       label-width="auto"
     >
-      <n-form-item label="原料" path="name">
+      <n-form-item label="原料" path="material_id">
         <n-select
-          v-model:value="formDataRef.name"
+          v-model:value="formDataRef.material_id"
           :options="material"
           filterable
           label-field="name"
@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
   import { ref } from 'vue';
-
+  import priceTrans from '@/utils/priceTransform';
   import useForm from '@/hooks/useForm';
   import { onlyNumber } from '@/utils/nativeAllowInput';
   import { addMaterialPut } from '@/api/material';
@@ -72,14 +72,14 @@
   const loading = ref(false);
 
   const { formDataRef, reset, validate } = useForm<{
-    name: string | null;
+    material_id: string | null;
     code: string | null;
     purchase_num: number | null;
     purchase_price: number | null;
     remark: string | null;
   }>(
     {
-      name: null,
+      material_id: null,
       code: null,
       purchase_num: null,
       purchase_price: null,
@@ -89,10 +89,13 @@
   );
 
   const rules = {
-    name: {
+    material_id: {
       required: true,
-      message: '请选择商品',
-      trigger: ['input', 'blur'],
+      message: '请选择原料',
+      trigger: ['change'],
+      validator(_rule: any, value: string) {
+        return !!value;
+      },
     },
     code: {
       required: true,
@@ -122,7 +125,7 @@
       addMaterialPut({
         ...formDataRef.value,
         purchase_num: +formDataRef.value.purchase_num!,
-        purchase_price: +formDataRef.value.purchase_price!,
+        purchase_price: priceTrans.save(formDataRef.value.purchase_price!),
       })
         .then(() => {
           loading.value = false;

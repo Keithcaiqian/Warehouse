@@ -64,7 +64,7 @@
   import { ref, reactive, onMounted } from 'vue';
   import { Search } from '@vicons/ionicons5';
   import dayjs from 'dayjs';
-
+  import priceTrans from '@/utils/priceTransform';
   import useVxeTable from '@/hooks/useVxeTable';
   import { useMaterialList } from '@/hooks/useMaterialList';
 
@@ -126,8 +126,22 @@
       },
       { field: 'code', title: '编码', width: 150, resizable: true },
       { field: 'purchase_num', title: '进货数量', resizable: true },
-      { field: 'purchase_price', title: '进货单价（元）', resizable: true },
-      { field: 'purchase_amount', title: '进货总价（元）', resizable: true },
+      {
+        field: 'purchase_price',
+        title: '进货单价（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_amount',
+        title: '进货总价（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       { field: 'unit', title: '单位', resizable: true },
       {
         field: 'remark',

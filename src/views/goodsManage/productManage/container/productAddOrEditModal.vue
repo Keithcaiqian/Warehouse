@@ -29,19 +29,22 @@
       <n-form-item label="单位" path="unit">
         <cn-input v-model:value="formDataRef.unit" />
       </n-form-item>
-      <n-form-item label="是否为组装商品" path="isAssemble">
-        <n-radio-group v-model:value="formDataRef.isAssemble" name="isAssemble">
+      <n-form-item label="是否为组装商品" path="is_assemble">
+        <n-radio-group
+          v-model:value="formDataRef.is_assemble"
+          name="is_assemble"
+          :disabled="formDataRef.id"
+        >
           <n-space>
             <n-radio value="y"> 是 </n-radio>
             <n-radio value="n"> 否 </n-radio>
           </n-space>
         </n-radio-group>
       </n-form-item>
-      <n-form-item label="商品品类" path="category" v-show="formDataRef.isAssemble === 'n'">
+      <n-form-item label="商品品类" path="category_id" v-show="formDataRef.is_assemble === 'n'">
         <n-select
-          v-model:value="formDataRef.category"
+          v-model:value="formDataRef.category_id"
           :options="category"
-          clearable
           label-field="name"
           value-field="id"
         />
@@ -62,6 +65,7 @@
 
   import useForm from '@/hooks/useForm';
   import { onlyNumber } from '@/utils/nativeAllowInput';
+  import priceTrans from '@/utils/priceTransform';
   import { addProduct, editProduct } from '@/api/product';
 
   import { useMessage } from 'naive-ui';
@@ -77,20 +81,20 @@
   const formRef$ = ref();
 
   const { formDataRef, reset, setFormData, validate } = useForm<{
-    id: string | null;
+    id: string | number | null;
     name: string | null;
     advise_price: number | null;
     unit: string | null;
-    isAssemble: 'y' | 'n';
-    category: string | null;
+    is_assemble: 'y' | 'n';
+    category_id: string | number | null;
   }>(
     {
       id: null,
       name: null,
       advise_price: null,
       unit: null,
-      isAssemble: 'n',
-      category: null,
+      is_assemble: 'n',
+      category_id: null,
     },
     formRef$
   );
@@ -111,6 +115,14 @@
       message: '请输入单位',
       trigger: ['input', 'blur'],
     },
+    category_id: {
+      required: true,
+      message: '请选择商品品类',
+      trigger: ['change'],
+      validator(_rule: any, value: string) {
+        return !!value;
+      },
+    },
   };
 
   function handleConfirm() {
@@ -130,8 +142,8 @@
       }
       fn({
         ...formDataRef.value,
-        advise_price: +formDataRef.value.advise_price!,
-        category: formDataRef.value.isAssemble === 'y' ? null : formDataRef.value.category,
+        advise_price: priceTrans.save(formDataRef.value.advise_price!),
+        category_id: formDataRef.value.is_assemble === 'y' ? null : formDataRef.value.category_id,
       })
         .then(() => {
           loading.value = false;
@@ -150,7 +162,7 @@
     if (data) {
       setFormData({
         ...data,
-        advise_price: data.advise_price.toString(),
+        advise_price: priceTrans.show(data.advise_price),
       });
     } else {
       reset();
