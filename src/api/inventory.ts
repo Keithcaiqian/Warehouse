@@ -45,7 +45,7 @@ export function getInventoryProductComposition(id: string) {
  */
 export function editInventoryProduct(params: any) {
   return http.request({
-    url: `/inventory/product/edit`,
+    url: `/inventory/product/loss/edit`,
     method: 'post',
     params,
   });
@@ -97,7 +97,7 @@ export function getInventoryMaterialListByIds(params: any) {
  */
 export function editInventoryMaterial(params: any) {
   return http.request({
-    url: `/inventory/material/edit`,
+    url: `/inventory/material/loss/edit`,
     method: 'post',
     params,
   });

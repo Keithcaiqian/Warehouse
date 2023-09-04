@@ -117,7 +117,7 @@
     getProductAssembly(data.id)
       .then((res) => {
         product.value.composition = res;
-        getInventoryMaterialListByIds(res.map((item) => item.id))
+        getInventoryMaterialListByIds(res.map((item) => item.material_id))
           .then((result) => {
             loading.value = false;
             console.log('result', result);

@@ -17,9 +17,9 @@
       <div>绑定对应消耗原料关系：</div>
 
       <div class="list">
-        <n-space class="item" v-for="item in meterialList" :key="item.id">
+        <n-space class="item" v-for="item in materialList" :key="item.id">
           <n-tag type="info" closable @close="handleClose(item.id)">
-            {{ meterialMap[item.id]?.name || item.id }}
+            {{ materialMap[item.id]?.name || item.id }}
           </n-tag>
           <span class="num">数量：</span>
           <n-input-number v-model:value="item.num" :min="1" size="small" />
@@ -46,10 +46,10 @@
           <n-space>
             <n-button
               @click="handleChooseMeterial(row.id)"
-              :disabled="meterialMap[row.id].choose"
+              :disabled="materialMap[row.id].choose"
               size="small"
-              :type="meterialMap[row.id].choose ? 'tertiary' : 'info'"
-              >{{ meterialMap[row.id].choose ? '已选' : '选择' }}</n-button
+              :type="materialMap[row.id].choose ? 'tertiary' : 'info'"
+              >{{ materialMap[row.id].choose ? '已选' : '选择' }}</n-button
             >
           </n-space>
         </template>
@@ -174,8 +174,8 @@
               choose: false,
             };
           });
-          meterialMap.value = map;
-
+          materialMap.value = map;
+          console.log('materialMap', materialMap.value);
           setListDataBySearchWord();
           handlePageChange({ currentPage, pageSize: tablePage.pageSize });
 
@@ -189,33 +189,33 @@
   }
 
   // 已选的原料列表
-  const meterialList = ref<
+  const materialList = ref<
     {
       id: string;
       num: number;
     }[]
   >([]);
-  const meterialMap = ref({}); //原料选择map字典
+  const materialMap = ref({}); //原料选择map字典
 
   function handleChooseMeterial(id: string) {
-    meterialList.value.push({
+    materialList.value.push({
       id,
       num: 1,
     });
-    meterialMap.value[id].choose = true;
+    materialMap.value[id].choose = true;
   }
 
   function handleClose(id: string) {
-    meterialList.value = meterialList.value.filter((item: any) => item.id !== id);
-    meterialMap.value[id].choose = false;
+    materialList.value = materialList.value.filter((item: any) => item.id !== id);
+    materialMap.value[id].choose = false;
   }
 
   function handleConfirm() {
-    console.log('meterialList', meterialList.value);
+    console.log('materialList', materialList.value);
     loading.value = true;
     setProductAssembly({
       id: product.value.id,
-      meterialList: [...meterialList.value],
+      materialList: [...materialList.value],
     })
       .then(() => {
         loading.value = false;
@@ -244,7 +244,11 @@
     loading.value = true;
     getProductAssembly(data.id)
       .then((res) => {
-        meterialList.value = [...res];
+        materialList.value = res.map((item) => ({
+          id: item.material_id,
+          name: item.name,
+          num: item.num,
+        }));
         loading.value = false;
         getMaterialManageListApi();
       })

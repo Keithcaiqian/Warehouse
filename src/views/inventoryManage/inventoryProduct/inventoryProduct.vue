@@ -27,7 +27,10 @@
 
       <template #options_default="{ row }">
         <n-space>
-          <n-button @click="openInventoryProductDetailModal(row.id)" size="small" type="info"
+          <n-button
+            @click="openInventoryProductDetailModal(row.product_id)"
+            size="small"
+            type="info"
             >详情</n-button
           >
           <n-button
