@@ -26,6 +26,12 @@
         </n-input>
       </template>
 
+      <template #is_assemble_default="{ row }">
+        <n-tag :type="row.is_assemble === 'y' ? 'info' : 'warning'">
+          {{ row.is_assemble === 'y' ? '是' : '否' }}
+        </n-tag>
+      </template>
+
       <template #options_default="{ row }: any">
         <n-space>
           <n-button @click="openAddOrEditProductModal(row)" size="small" type="info">修改</n-button>
@@ -161,22 +167,32 @@
     },
     columns: [
       { type: 'seq', title: '序号', width: 60 },
-      { field: 'name', title: '商品名称' },
+      { field: 'name', title: '商品名称', resizable: true },
       {
         field: 'advise_price',
         title: '建议零售价（元）',
+        resizable: true,
         formatter({ cellValue }) {
           return priceTrans.show(cellValue);
         },
       },
-      { field: 'unit', title: '单位' },
+      { field: 'unit', title: '单位', resizable: true },
       {
         field: 'category_name',
         title: '商品品类',
+        resizable: true,
         filters: [],
       },
-      { field: 'update_time', title: '修改日期' },
-      { field: 'create_time', title: '创建日期' },
+      {
+        field: 'is_assemble',
+        title: '是否组装品',
+        resizable: true,
+        slots: {
+          default: 'is_assemble_default',
+        },
+      },
+      { field: 'update_time', title: '修改日期', resizable: true },
+      { field: 'create_time', title: '创建日期', resizable: true },
       {
         field: 'options',
         title: '操作',

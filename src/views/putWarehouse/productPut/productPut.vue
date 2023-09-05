@@ -26,6 +26,12 @@
         </n-input>
       </template>
 
+      <template #is_assemble_default="{ row }">
+        <n-tag :type="row.is_assemble === 'y' ? 'info' : 'warning'">
+          {{ row.is_assemble === 'y' ? '是' : '否' }}
+        </n-tag>
+      </template>
+
       <template #pager>
         <!--使用 pager 插槽-->
         <vxe-pager
@@ -118,13 +124,14 @@
       },
     },
     columns: [
-      { type: 'seq', title: '序号', width: 60, resizable: true },
+      { type: 'seq', title: '序号', width: 60, resizable: true, fixed: 'left' },
       {
         field: 'product_name',
         title: '商品名称',
         resizable: true,
+        fixed: 'left',
       },
-      { field: 'code', title: '编码', width: 150, resizable: true },
+      { field: 'code', title: '编码', width: 150, resizable: true, fixed: 'left' },
       { field: 'purchase_num', title: '进货数量', resizable: true },
       {
         field: 'purchase_price',
@@ -148,6 +155,14 @@
         resizable: true,
         formatter({ cellValue }) {
           return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'is_assemble',
+        title: '是否组装品',
+        resizable: true,
+        slots: {
+          default: 'is_assemble_default',
         },
       },
       { field: 'unit', title: '单位', resizable: true },

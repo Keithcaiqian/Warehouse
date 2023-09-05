@@ -28,7 +28,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import useVxeTable from '@/hooks/useVxeTable';
-
+  import priceTrans from '@/utils/priceTransform';
   import { getInventoryProductComposition } from '@/api/inventory';
 
   const showModal = ref(false);
@@ -40,8 +40,22 @@
       { field: 'code', title: '编码', resizable: true },
       { field: 'name', title: '原料名称', resizable: true },
       { field: 'num', title: '组成数量', resizable: true },
-      { field: 'purchase_price', title: '进货单价（元）', resizable: true },
-      { field: 'purchase_amount', title: '成本总额（元）', resizable: true },
+      {
+        field: 'purchase_price',
+        title: '进货单价（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_amount',
+        title: '成本总额（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       { field: 'unit', title: '单位', resizable: true },
     ],
     data: [],

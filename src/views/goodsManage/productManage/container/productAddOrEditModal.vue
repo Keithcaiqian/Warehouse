@@ -41,7 +41,7 @@
           </n-space>
         </n-radio-group>
       </n-form-item>
-      <n-form-item label="商品品类" path="category_id" v-show="formDataRef.is_assemble === 'n'">
+      <n-form-item label="商品品类" path="category_id">
         <n-select
           v-model:value="formDataRef.category_id"
           :options="category"
@@ -143,7 +143,6 @@
       fn({
         ...formDataRef.value,
         advise_price: priceTrans.save(formDataRef.value.advise_price!),
-        category_id: formDataRef.value.is_assemble === 'y' ? null : formDataRef.value.category_id,
       })
         .then(() => {
           loading.value = false;

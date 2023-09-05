@@ -112,3 +112,14 @@ export function lossInventoryMaterial() {
     method: 'get',
   });
 }
+
+/**
+ * @description: 原料转化为成品
+ */
+export function materialTransformProduct(params: any) {
+  return http.request({
+    url: `/inventory/material/transform/product`,
+    method: 'post',
+    params,
+  });
+}
