@@ -7,7 +7,11 @@
       <template #toolbar_buttons>
         <n-space>
           <n-button @click="openAddProductPutModal" type="info">添加入库</n-button>
-          <n-date-picker v-model:value="datetime" type="daterange" @confirm="handleChangeTime" />
+          <n-date-picker
+            v-model:value="datetime"
+            type="daterange"
+            @update:value="handleChangeTime"
+          />
         </n-space>
       </template>
 

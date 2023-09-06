@@ -7,7 +7,11 @@
       <template #toolbar_buttons>
         <n-space>
           <n-button @click="openAddOrderModal" type="info">添加订单</n-button>
-          <n-date-picker v-model:value="datetime" type="daterange" @confirm="handleChangeTime" />
+          <n-date-picker
+            v-model:value="datetime"
+            type="daterange"
+            @update:value="handleChangeTime"
+          />
         </n-space>
       </template>
 
@@ -193,6 +197,7 @@
 
   function getOrderListApi() {
     table.loading = true;
+    console.log('datetime.value', datetime.value);
     getOrderList({
       currentPage: tablePage.currentPage,
       pageSize: tablePage.pageSize,

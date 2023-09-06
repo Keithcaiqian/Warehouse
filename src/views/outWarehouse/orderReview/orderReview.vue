@@ -7,7 +7,11 @@
       <template #toolbar_buttons>
         <n-space>
           <n-button @click="openAddOrEditOrderModal(null)" type="info">添加订单</n-button>
-          <n-date-picker v-model:value="datetime" type="daterange" @confirm="handleChangeTime" />
+          <n-date-picker
+            v-model:value="datetime"
+            type="daterange"
+            @update:value="handleChangeTime"
+          />
         </n-space>
       </template>
 

@@ -78,7 +78,7 @@
               <n-form-item label="手机号" path="buyer_phone">
                 <cn-input
                   v-model:value="formDataRef.buyer_phone"
-                  max-length="11"
+                  :max-length="11"
                   :allow-input="onlyNumber"
                 />
               </n-form-item>
@@ -89,7 +89,7 @@
             <vxe-grid ref="productTable$" v-bind="productTable">
               <!-- 成本 -->
               <template #purchase_amount_default="{ row }">
-                {{ NP.times(row.purchase_price, inventoryMap[row.id].selectNum) }}
+                {{ priceTrans.show(NP.times(row.purchase_price, inventoryMap[row.id].selectNum)) }}
               </template>
               <!-- 售卖总价 -->
               <template #sell_amount_default="{ row }">
@@ -102,7 +102,7 @@
                 {{
                   row.sell_price
                     ? NP.times(
-                        NP.minus(row.sell_price - row.purchase_price),
+                        NP.minus(row.sell_price, priceTrans.show(row.purchase_price)),
                         inventoryMap[row.id].selectNum
                       )
                     : null
@@ -135,7 +135,12 @@
     <template #footer>
       <n-space justify="end">
         <n-button @click="showModal = false">关闭</n-button>
-        <n-button :loading="loading" @click="handleConfirm" type="info">确认</n-button>
+        <n-popconfirm @positive-click="handleConfirm" @negative-click="() => {}">
+          <template #trigger>
+            <n-button :loading="loading" type="info">确认</n-button>
+          </template>
+          确定{{ formDataRef.id ? '编辑' : '创建' }}订单吗吗？
+        </n-popconfirm>
       </n-space>
     </template>
   </n-modal>
@@ -148,11 +153,12 @@
   import useVxeTable from '@/hooks/useVxeTable';
   import useForm from '@/hooks/useForm';
   import { onlyNumber } from '@/utils/nativeAllowInput';
+  import priceTrans from '@/utils/priceTransform';
+  import { useMessage, useDialog } from 'naive-ui';
 
   import { createOrder, getOrderDetail, editOrder } from '@/api/order';
   import { getInventoryProductListAll } from '@/api/inventory';
 
-  import { useMessage, useDialog } from 'naive-ui';
   const message = useMessage();
   const dialog = useDialog();
 
@@ -225,8 +231,22 @@
       { field: 'code', title: '编码', resizable: true },
 
       { field: 'num', title: '库存数量', resizable: true },
-      { field: 'advise_price', title: '建议零售价（元）', resizable: true },
-      { field: 'purchase_price', title: '进货单价（元）', resizable: true },
+      {
+        field: 'advise_price',
+        title: '建议零售价（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_price',
+        title: '进货单价（元）',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       { field: 'unit', title: '单位', resizable: true },
       { field: 'create_time', title: '入库时间', resizable: true },
       {
@@ -350,8 +370,23 @@
     columns: [
       { field: 'code', title: '商品编码', width: 150, resizable: true, fixed: 'left' },
       { field: 'name', title: '商品名称', width: 150, resizable: true, fixed: 'left' },
-      { field: 'advise_price', title: '建议零售价', resizable: true, fixed: 'left' },
-      { field: 'purchase_price', title: '进货单价', resizable: true },
+      {
+        field: 'advise_price',
+        title: '建议零售价',
+        resizable: true,
+        fixed: 'left',
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_price',
+        title: '进货单价',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       {
         field: 'purchase_amount',
         title: '成本',
@@ -466,7 +501,10 @@
     loading.value = true;
     fn({
       ...formDataRef.value,
-      product_list: list,
+      product_list: list.map((item) => ({
+        ...item,
+        sell_price: priceTrans.save(item.sell_price),
+      })),
     })
       .then(() => {
         loading.value = false;
