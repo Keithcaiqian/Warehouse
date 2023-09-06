@@ -15,7 +15,7 @@ import { setObjToUrlParams } from '@/utils/urlUtils';
 
 import { RequestOptions, Result, CreateAxiosOptions } from './types';
 
-import { useUser } from '@/store/modules/user';
+import { useUser } from '@/store/userInfoStore';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix || '';
@@ -177,10 +177,10 @@ const transform: AxiosTransform = {
   requestInterceptors: (config, options) => {
     // 请求之前处理config
     const userStore = useUser();
-    const token = userStore.getToken;
+    const token = userStore.getToken();
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       // jwt token
-      (config as Recordable).headers.Authorization = options.authenticationScheme
+      (config as Recordable).headers.Token = options.authenticationScheme
         ? `${options.authenticationScheme} ${token}`
         : token;
     }

@@ -4,7 +4,6 @@ import { resolve } from 'path';
 import { wrapperEnv } from './build/utils';
 import { createVitePlugins } from './build/vite/plugin';
 import { OUTPUT_DIR } from './build/constant';
-import { createProxy } from './build/vite/proxy';
 import pkg from './package.json';
 import { format } from 'date-fns';
 const { dependencies, devDependencies, name, version } = pkg;
@@ -22,8 +21,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
   const root = process.cwd();
   const env = loadEnv(mode, root);
   const viteEnv = wrapperEnv(env);
-  const { VITE_PUBLIC_PATH, VITE_PORT, VITE_GLOB_PROD_MOCK, VITE_PROXY } =
-    viteEnv;
+  const { VITE_PUBLIC_PATH, VITE_PORT, VITE_GLOB_PROD_MOCK, VITE_PROXY } = viteEnv;
   const prodMock = VITE_GLOB_PROD_MOCK;
   const isBuild = command === 'build';
   return {
@@ -42,6 +40,15 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       ],
       dedupe: ['vue'],
     },
+    css: {
+      preprocessorOptions: {
+        less: {
+          modifyVars: {},
+          javascriptEnabled: true,
+          additionalData: `@import "src/styles/var.less";`,
+        },
+      },
+    },
     plugins: createVitePlugins(viteEnv, isBuild, prodMock),
     define: {
       __APP_INFO__: JSON.stringify(__APP_INFO__),
@@ -49,7 +56,22 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     server: {
       host: true,
       port: VITE_PORT,
-      proxy: createProxy(VITE_PROXY),
+      proxy: {
+        '^/database-modelling-service': {
+          target: 'http://10.1.3.36:8001',
+          // target: 'http://10.1.4.104:7009',
+          // target: 'http://172.0.17.20:7003',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/database-modelling-service/, ''),
+        },
+        '/database-modelling-service/ws': {
+          target: 'ws://10.1.3.36:8001',
+          // target: 'ws://172.0.17.20:7003',
+          changeOrigin: true,
+          ws: true, //websocket代理设置
+          rewrite: (path) => path.replace(/^\/database-modelling-service/, '/'),
+        },
+      },
     },
     optimizeDeps: {
       include: [],

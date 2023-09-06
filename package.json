@@ -37,9 +37,9 @@
     "mitt": "^3.0.1",
     "mockjs": "^1.1.0",
     "naive-ui": "^2.34.4",
-    "number-precision": "^1.6.0",
     "pinia": "^2.1.6",
     "qs": "^6.11.2",
+    "remixicon": "^3.5.0",
     "vfonts": "^0.0.3",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4",
@@ -85,7 +85,6 @@
     "stylelint-config-standard": "^29.0.0",
     "stylelint-order": "^5.0.0",
     "stylelint-scss": "^4.7.0",
-    "tailwindcss": "^3.3.3",
     "typescript": "^4.9.5",
     "unplugin-vue-components": "^0.22.12",
     "vite": "^3.2.7",
@@ -116,15 +115,7 @@
     "admin",
     "typescript"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jekip/naive-ui-admin.git"
-  },
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jekip/naive-ui-admin/issues"
-  },
-  "homepage": "https://github.com/jekip/naive-ui-admin",
   "engines": {
     "node": ">=16"
   }

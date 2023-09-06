@@ -17,7 +17,7 @@ export default class Storage {
   }
 
   private getKey(key: string) {
-    return `${this.prefixKey}${key}`.toUpperCase();
+    return `${this.prefixKey}${key}`;
   }
 
   /**

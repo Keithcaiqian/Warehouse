@@ -85,7 +85,7 @@
 <script lang="ts" setup>
   import { reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { useUserStore } from '@/store/modules/user';
+  import { useUserInfoStoreStore } from '@/store/userInfoStore';
   import { useMessage } from 'naive-ui';
   import { ResultEnum } from '@/enums/httpEnum';
   import { PersonOutline, LockClosedOutline, LogoGithub, LogoFacebook } from '@vicons/ionicons5';
@@ -113,7 +113,7 @@
     password: { required: true, message: '请输入密码', trigger: 'blur' },
   };
 
-  const userStore = useUserStore();
+  const userStore = useUserInfoStoreStore();
 
   const router = useRouter();
   const route = useRoute();
@@ -200,13 +200,6 @@
   }
 
   @media (min-width: 768px) {
-    .view-account {
-      background-image: url('../../assets/images/login.svg');
-      background-repeat: no-repeat;
-      background-position: 50%;
-      background-size: 100%;
-    }
-
     .page-account-container {
       padding: 32px 0 24px 0;
     }

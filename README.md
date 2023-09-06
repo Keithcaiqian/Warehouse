@@ -5,7 +5,6 @@
 - 安装依赖
 
 ```bash
-cd Warehouse
 
 pnpm install
 
@@ -22,7 +21,3 @@ pnpm run dev
 ```bash
 pnpm build
 ```
-
-## 开发环境
-- 更换接口联调路径
-修改 .env.development 文件中的 VITE_PROXY 的值

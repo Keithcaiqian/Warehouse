@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
 import { isNavigationFailure, Router } from 'vue-router';
-import { useUser } from '@/store/modules/user';
+import { useUser } from '@/store/userInfoStore';
 import { useAsyncRoute } from '@/store/modules/asyncRoute';
 import { ACCESS_TOKEN } from '@/store/mutation-types';
 import { storage } from '@/utils/Storage';

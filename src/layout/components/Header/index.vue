@@ -72,20 +72,6 @@
       </n-breadcrumb>
     </div>
     <div class="layout-header-right">
-      <div
-        class="layout-header-trigger layout-header-trigger-min"
-        v-for="item in iconList"
-        :key="item.icon"
-      >
-        <n-tooltip placement="bottom">
-          <template #trigger>
-            <n-icon size="18">
-              <component :is="item.icon" v-on="item.eventObject || {}" />
-            </n-icon>
-          </template>
-          <span>{{ item.tips }}</span>
-        </n-tooltip>
-      </div>
       <!--切换全屏-->
       <div class="layout-header-trigger layout-header-trigger-min">
         <n-tooltip placement="bottom">
@@ -110,21 +96,8 @@
           </div>
         </n-dropdown>
       </div>
-      <!--设置-->
-      <div class="layout-header-trigger layout-header-trigger-min" @click="openSetting">
-        <n-tooltip placement="bottom-end">
-          <template #trigger>
-            <n-icon size="18" style="font-weight: bold">
-              <SettingOutlined />
-            </n-icon>
-          </template>
-          <span>项目配置</span>
-        </n-tooltip>
-      </div>
     </div>
   </div>
-  <!--项目配置-->
-  <ProjectSetting ref="drawerSetting" />
 </template>
 
 <script lang="ts">
@@ -133,16 +106,14 @@
   import components from './components';
   import { NDialogProvider, useDialog, useMessage } from 'naive-ui';
   import { TABS_ROUTES } from '@/store/mutation-types';
-  import { useUserStore } from '@/store/modules/user';
-  import { useScreenLockStore } from '@/store/modules/screenLock';
-  import ProjectSetting from './ProjectSetting.vue';
+  import { useUserInfoStoreStore } from '@/store/userInfoStore';
   import { AsideMenu } from '@/layout/components/Menu';
   import { useProjectSetting } from '@/hooks/setting/useProjectSetting';
   import { websiteConfig } from '@/config/website.config';
 
   export default defineComponent({
     name: 'PageHeader',
-    components: { ...components, NDialogProvider, ProjectSetting, AsideMenu },
+    components: { ...components, NDialogProvider, AsideMenu },
     props: {
       collapsed: {
         type: Boolean,
@@ -152,13 +123,12 @@
       },
     },
     setup(props) {
-      const userStore = useUserStore();
-      const useLockscreen = useScreenLockStore();
+      const userStore = useUserInfoStoreStore();
       const message = useMessage();
       const dialog = useDialog();
       const { navMode, navTheme, headerSetting, menuSetting, crumbsSetting } = useProjectSetting();
 
-      const { name } = userStore?.info || {};
+      const { name } = userStore?.userInfo || {};
 
       const drawerSetting = ref();
 
@@ -274,27 +244,6 @@
         }
       };
 
-      // 图标列表
-      const iconList = [
-        {
-          icon: 'SearchOutlined',
-          tips: '搜索',
-        },
-        {
-          icon: 'GithubOutlined',
-          tips: 'github',
-          eventObject: {
-            click: () => window.open('https://github.com/jekip/naive-ui-admin'),
-          },
-        },
-        {
-          icon: 'LockOutlined',
-          tips: '锁屏',
-          eventObject: {
-            click: () => useLockscreen.setLock(true),
-          },
-        },
-      ];
       const avatarOptions = [
         {
           label: '个人设置',
@@ -325,7 +274,6 @@
 
       return {
         ...toRefs(state),
-        iconList,
         toggleFullScreen,
         doLogout,
         route,
