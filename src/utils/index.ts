@@ -11,6 +11,12 @@ export function renderIcon(icon) {
   return () => h(NIcon, null, { default: () => h(icon) });
 }
 /**
+ * render remixicon图标
+ * */
+export function renderRMIcon(className) {
+  return () => h('i', { class: className });
+}
+/**
  * font 图标(Font class)
  * */
 export function renderFontClassIcon(icon: string, iconName = 'iconfont') {
