@@ -29,13 +29,15 @@
             <div>{{ formDataRef.buyer_phone }}</div>
           </n-form-item>
           <n-form-item label="订单成本（元）：">
-            <div>{{ formDataRef.purchase_amount }}</div>
+            <div>{{
+              formDataRef.purchase_amount ? priceTrans.show(formDataRef.purchase_amount) : 0
+            }}</div>
           </n-form-item>
           <n-form-item label="订单总额（元）：">
-            <div>{{ formDataRef.sell_amount }}</div>
+            <div>{{ formDataRef.sell_amount ? priceTrans.show(formDataRef.sell_amount) : 0 }}</div>
           </n-form-item>
           <n-form-item label="订单利润（元）：">
-            <div>{{ formDataRef.profit }}</div>
+            <div>{{ formDataRef.profit ? priceTrans.show(formDataRef.profit) : 0 }}</div>
           </n-form-item>
           <n-form-item label="订单状态：">
             <div>{{ OrderStatusMap[formDataRef.status!] }}</div>
@@ -83,7 +85,7 @@
   import useVxeTable from '@/hooks/useVxeTable';
   import useForm from '@/hooks/useForm';
   import { OrderStatusEnum, OrderStatusMap } from '@/enums/orderStatusEnum';
-
+  import priceTrans from '@/utils/priceTransform';
   import OrderCheckModal from './OrderCheckModal.vue';
 
   import { getOrderDetail } from '@/api/order';
@@ -130,11 +132,41 @@
         field: 'out_num',
         title: '卖出数量',
       },
-      { field: 'purchase_price', title: '商品单价（元）' },
-      { field: 'purchase_amount', title: '成本（元）' },
-      { field: 'sell_price', title: '售卖单价（元）' },
-      { field: 'sell_amount', title: '售卖总价（元）' },
-      { field: 'profit', title: '利润（元）' },
+      {
+        field: 'purchase_price',
+        title: '商品单价（元）',
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_amount',
+        title: '成本（元）',
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'sell_price',
+        title: '售卖单价（元）',
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'sell_amount',
+        title: '售卖总价（元）',
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'profit',
+        title: '利润（元）',
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
     ],
     data: [],
   });

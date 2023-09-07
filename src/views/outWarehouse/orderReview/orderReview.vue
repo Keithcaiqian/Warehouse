@@ -125,7 +125,7 @@
 <script setup lang="ts">
   import { ref, reactive, onMounted } from 'vue';
   import dayjs from 'dayjs';
-
+  import priceTrans from '@/utils/priceTransform';
   import useVxeTable from '@/hooks/useVxeTable';
   import { OrderStatusEnum, OrderStatusMap, UnOrderStatusList } from '@/enums/orderStatusEnum';
   import OrderDetailModal from '../components/OrderDetailModal.vue';
@@ -196,7 +196,14 @@
         resizable: true,
       },
       { field: 'buyer_phone', title: '买家手机号', resizable: true },
-      { field: 'sell_amount', title: '订单总额', resizable: true },
+      {
+        field: 'sell_amount',
+        title: '订单总额',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       {
         field: 'status',
         title: '订单状态',
