@@ -318,12 +318,12 @@
             id: inventory.id,
             name: inventory.name,
             code: inventory.code,
-            advise_price: inventory.advise_price,
-            purchase_price: inventory.purchase_price,
+            advise_price: priceTrans.show(inventory.advise_price),
+            purchase_price: priceTrans.show(inventory.purchase_price),
             purchase_amount: null,
             sell_amount: null,
             profit: null,
-            sell_price: element.sell_price,
+            sell_price: priceTrans.show(element.sell_price),
           });
         }
 
