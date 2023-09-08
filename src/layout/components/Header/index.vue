@@ -1,9 +1,12 @@
 <template>
   <div class="layout-header">
     <!--顶部菜单-->
+    <div v-if="navMode === 'vertical-top'" class="layout-header-left">
+      <Logo :collapsed="false" />
+    </div>
     <div
       class="layout-header-left"
-      v-if="navMode === 'horizontal' || (navMode === 'horizontal-mix' && mixMenu)"
+      v-else-if="navMode === 'horizontal' || (navMode === 'horizontal-mix' && mixMenu)"
     >
       <div class="logo" v-if="navMode === 'horizontal'">
         <img :src="websiteConfig.logo" alt="" />
@@ -96,8 +99,21 @@
           </div>
         </n-dropdown>
       </div>
+      <!--设置-->
+      <div class="layout-header-trigger layout-header-trigger-min" @click="openSetting">
+        <n-tooltip placement="bottom-end">
+          <template #trigger>
+            <n-icon size="18" style="font-weight: bold">
+              <SettingOutlined />
+            </n-icon>
+          </template>
+          <span>项目配置</span>
+        </n-tooltip>
+      </div>
     </div>
   </div>
+  <!--项目配置-->
+  <ProjectSetting ref="drawerSetting" />
 </template>
 
 <script lang="ts">
@@ -108,12 +124,14 @@
   import { TABS_ROUTES } from '@/store/mutation-types';
   import { useUserInfoStoreStore } from '@/store/userInfoStore';
   import { AsideMenu } from '@/layout/components/Menu';
+  import ProjectSetting from './ProjectSetting.vue';
+  import { Logo } from '../Logo';
   import { useProjectSetting } from '@/hooks/setting/useProjectSetting';
   import { websiteConfig } from '@/config/website.config';
 
   export default defineComponent({
     name: 'PageHeader',
-    components: { ...components, NDialogProvider, AsideMenu },
+    components: { ...components, Logo, ProjectSetting, NDialogProvider, AsideMenu },
     props: {
       collapsed: {
         type: Boolean,
@@ -150,6 +168,8 @@
       const mixMenu = computed(() => {
         return unref(menuSetting).mixMenu;
       });
+
+      const { menuWidth } = unref(menuSetting);
 
       const getChangeStyle = computed(() => {
         const { collapsed } = props;
@@ -280,6 +300,7 @@
         dropdownSelect,
         avatarOptions,
         getChangeStyle,
+        menuWidth,
         avatarSelect,
         breadcrumbList,
         reloadPage,

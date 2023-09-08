@@ -2,7 +2,9 @@
   <n-layout class="layout" :position="fixedMenu" has-sider>
     <n-layout-sider
       v-if="
-        !isMobile && isMixMenuNoneSub && (navMode === 'vertical' || navMode === 'horizontal-mix')
+        !isMobile &&
+        isMixMenuNoneSub &&
+        (navMode === 'vertical' || navMode === 'vertical-top' || navMode === 'horizontal-mix')
       "
       show-trigger="bar"
       @collapse="collapsed = true"
@@ -40,7 +42,19 @@
     </n-drawer>
 
     <n-layout :inverted="inverted">
-      <n-layout-header :inverted="getHeaderInverted" :position="fixedHeader">
+      <n-layout-header
+        :inverted="getHeaderInverted"
+        :position="fixedHeader"
+        :style="
+          navMode === 'vertical-top'
+            ? {
+                width: '100vw',
+                zIndex: 20,
+                position: 'fixed',
+              }
+            : {}
+        "
+      >
         <PageHeader v-model:collapsed="collapsed" :inverted="inverted" />
       </n-layout-header>
 
