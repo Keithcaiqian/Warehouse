@@ -5,13 +5,17 @@
     <n-card class="card" hoverable>
       <div class="priceWrap">
         <div class="priceItem"
-          >成本总额：￥<span class="price">{{ priceReactive.purchase_amount }}</span></div
+          >成本总额：￥<span class="price">{{
+            priceTrans.show(priceReactive.purchase_amount)
+          }}</span></div
         >
         <div class="priceItem"
-          >销售总额：￥<span class="price">{{ priceReactive.sell_amount }}</span></div
+          >销售总额：￥<span class="price">{{
+            priceTrans.show(priceReactive.sell_amount)
+          }}</span></div
         >
         <div class="priceItem"
-          >总利润：￥<span class="price">{{ priceReactive.profit }}</span></div
+          >总利润：￥<span class="price">{{ priceTrans.show(priceReactive.profit) }}</span></div
         >
       </div>
     </n-card>
@@ -37,7 +41,7 @@
         style="width: 270px"
       />
       <n-form-item label="销售者" label-placement="left">
-        <cn-input v-model:value="state.buyer" style="width: 100px" />
+        <cn-input v-model:value="state.buyer" placeholder="请输入" style="width: 100px" />
       </n-form-item>
       <n-form-item label="商品分类" label-placement="left">
         <n-select
@@ -45,16 +49,16 @@
           :options="categoryList"
           label-field="name"
           value-field="id"
-          placeholder=""
+          placeholder="请选择"
           style="width: 150px"
           clearable
         />
       </n-form-item>
       <n-form-item label="商品名称" label-placement="left">
-        <cn-input v-model:value="state.product_name" style="width: 150px" />
+        <cn-input v-model:value="state.product_name" placeholder="请输入" style="width: 150px" />
       </n-form-item>
       <n-form-item label="编码" label-placement="left">
-        <cn-input v-model:value="state.code" style="width: 150px" />
+        <cn-input v-model:value="state.code" placeholder="请输入" style="width: 150px" />
       </n-form-item>
       <n-button @click="handleSearch" type="info">查询</n-button>
     </n-space>
@@ -86,18 +90,12 @@
 <script setup lang="ts">
   import { ref, reactive, onMounted } from 'vue';
   import dayjs from 'dayjs';
-  import { Search } from '@vicons/ionicons5';
+  import priceTrans from '@/utils/priceTransform';
+  import NP from 'number-precision';
   import useVxeTable from '@/hooks/useVxeTable';
   import { useProductCategory } from '@/hooks/useProductCategory';
 
-  import ProductAddOrEditModal from './container/productAddOrEditModal.vue';
-  import ProductCategoryManageModal from './container/productCategoryManageModal.vue';
-  import AssemblySettingModal from './container/assemblySettingModal.vue';
-
   import { getReportList } from '@/api/report';
-
-  import { useMessage } from 'naive-ui';
-  const message = useMessage();
 
   // 商品分类
   const { categoryList, categoryMap, getProductCategoryListApi } = useProductCategory();
@@ -125,7 +123,7 @@
       name: '本月',
     },
   ];
-  const dateRef = ref('month');
+  const dateRef = ref<null | string>('month');
 
   function handleChangeData(code: string) {
     dateRef.value = code;
@@ -181,23 +179,73 @@
       { field: 'product_name', title: '商品名称', fixed: 'left', resizable: true },
       { field: 'code', title: '编码', fixed: 'left', resizable: true },
       { field: 'num', title: '出货数量', resizable: true },
-      { field: 'purchase_price', title: '进货单价', resizable: true },
-      { field: 'purchase_amount', title: '进货总额', resizable: true },
-      { field: 'advise_price', title: '建议零售价', resizable: true },
-      { field: 'advise_amount', title: '建议销售总额', resizable: true },
-      { field: 'sell_price', title: '售卖单价', resizable: true },
-      { field: 'sell_amount', title: '售卖总价', resizable: true },
+      {
+        field: 'purchase_price',
+        title: '进货单价',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'purchase_amount',
+        title: '进货总额',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'advise_price',
+        title: '建议零售价',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'advise_amount',
+        title: '建议销售总额',
+        resizable: true,
+        formatter({ row }) {
+          return priceTrans.show(NP.times(row.advise_price, row.num));
+        },
+      },
+      {
+        field: 'sell_price',
+        title: '售卖单价',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
+      {
+        field: 'sell_amount',
+        title: '售卖总价',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+      },
       {
         field: 'category_id',
         title: '商品品类',
         resizable: true,
         formatter({ cellValue }) {
-          return categoryMap.value[cellValue] || cellValue;
+          return categoryMap.value[cellValue]?.name || cellValue;
         },
       },
       { field: 'create_time', title: '创建时间', resizable: true },
       { field: 'create_user', title: '销售者', resizable: true },
-      { field: 'profit', title: '总利润', resizable: true, fixed: 'right' },
+      {
+        field: 'profit',
+        title: '总利润',
+        resizable: true,
+        formatter({ cellValue }) {
+          return priceTrans.show(cellValue);
+        },
+        fixed: 'right',
+      },
     ],
     data: [],
   });

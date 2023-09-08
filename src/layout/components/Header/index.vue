@@ -123,6 +123,8 @@
       </div> -->
     </div>
   </div>
+  <!-- 修改密码 -->
+  <EditPasswordModal ref="editPasswordModal$" @confirm="handleChangePassword" />
   <!--项目配置-->
   <ProjectSetting ref="drawerSetting" />
 </template>
@@ -139,10 +141,11 @@
   import { AsideMenu } from '@/layout/components/Menu';
   import { useProjectSetting } from '@/hooks/setting/useProjectSetting';
   import { websiteConfig } from '@/config/website.config';
+  import EditPasswordModal from '@/components/EditPasswordModal/EditPasswordModal.vue';
 
   export default defineComponent({
     name: 'PageHeader',
-    components: { ...components, NDialogProvider, ProjectSetting, AsideMenu },
+    components: { ...components, NDialogProvider, ProjectSetting, AsideMenu, EditPasswordModal },
     props: {
       collapsed: {
         type: Boolean,
@@ -158,12 +161,12 @@
       const dialog = useDialog();
       const { navMode, navTheme, headerSetting, menuSetting, crumbsSetting } = useProjectSetting();
 
-      const { name } = userStore?.info || {};
+      const { username } = userStore?.info || {};
 
       const drawerSetting = ref();
 
       const state = reactive({
-        username: name ?? '',
+        username: username ?? '',
         fullscreenIcon: 'FullscreenOutlined',
         navMode,
         navTheme,
@@ -228,6 +231,43 @@
           path: '/redirect' + unref(route).fullPath,
         });
       };
+
+      //   修改密码
+      const editPasswordModal$ = ref();
+
+      function openEditPasswordModal() {
+        if (userStore?.info?.id) {
+          editPasswordModal$.value.open(userStore.info.id);
+        } else {
+          userStore.logout().then(() => {
+            message.warning('用户信息有误，请重新登录');
+            // 移除标签页
+            localStorage.removeItem(TABS_ROUTES);
+            router
+              .replace({
+                name: 'Login',
+                query: {
+                  redirect: route.fullPath,
+                },
+              })
+              .finally(() => location.reload());
+          });
+        }
+      }
+
+      function handleChangePassword() {
+        userStore.logout().then(() => {
+          message.success('修改成功，请重新登录');
+          router
+            .replace({
+              name: 'Login',
+              query: {
+                redirect: route.fullPath,
+              },
+            })
+            .finally(() => location.reload());
+        });
+      }
 
       // 退出登录
       const doLogout = () => {
@@ -309,9 +349,9 @@
       //头像下拉菜单
       const avatarSelect = (key) => {
         switch (key) {
-          // case 1:
-          //   router.push({ name: 'Setting' });
-          //   break;
+          case 1:
+            openEditPasswordModal();
+            break;
           case 2:
             doLogout();
             break;
@@ -333,6 +373,8 @@
         avatarOptions,
         getChangeStyle,
         avatarSelect,
+        editPasswordModal$,
+        handleChangePassword,
         breadcrumbList,
         reloadPage,
         drawerSetting,

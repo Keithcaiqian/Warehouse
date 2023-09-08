@@ -15,7 +15,11 @@
           :rules="rules"
         >
           <n-form-item path="username">
-            <n-input v-model:value="formInline.username" placeholder="请输入用户名">
+            <n-input
+              v-model:value="formInline.username"
+              placeholder="请输入用户名"
+              @keyup.enter="handleSubmit"
+            >
               <template #prefix>
                 <n-icon size="18" color="#808695">
                   <PersonOutline />
@@ -29,6 +33,7 @@
               type="password"
               showPasswordOn="click"
               placeholder="请输入密码"
+              @keyup.enter="handleSubmit"
             >
               <template #prefix>
                 <n-icon size="18" color="#808695">
@@ -88,7 +93,7 @@
   import { useUserStore } from '@/store/modules/user';
   import { useMessage } from 'naive-ui';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { PersonOutline, LockClosedOutline, LogoGithub, LogoFacebook } from '@vicons/ionicons5';
+  import { PersonOutline, LockClosedOutline } from '@vicons/ionicons5';
   import { PageEnum } from '@/enums/pageEnum';
   import { websiteConfig } from '@/config/website.config';
   interface FormState {
@@ -103,8 +108,8 @@
   const LOGIN_NAME = PageEnum.BASE_LOGIN_NAME;
 
   const formInline = reactive({
-    username: 'admin',
-    password: '123456',
+    username: '',
+    password: '',
     isCaptcha: true,
   });
 
@@ -159,6 +164,7 @@
     flex-direction: column;
     height: 100vh;
     overflow: auto;
+    background-color: #33343f;
 
     &-container {
       flex: 1;
@@ -200,13 +206,6 @@
   }
 
   @media (min-width: 768px) {
-    .view-account {
-      background-image: url('../../assets/images/bg.jpg');
-      background-repeat: no-repeat;
-      background-position: 50%;
-      background-size: cover;
-    }
-
     .page-account-container {
       padding: 32px 0 24px 0;
     }
