@@ -175,7 +175,6 @@
             };
           });
           materialMap.value = map;
-          console.log('materialMap', materialMap.value);
           setListDataBySearchWord();
           handlePageChange({ currentPage, pageSize: tablePage.pageSize });
 
@@ -211,7 +210,6 @@
   }
 
   function handleConfirm() {
-    console.log('materialList', materialList.value);
     loading.value = true;
     setProductAssembly({
       id: product.value.id,

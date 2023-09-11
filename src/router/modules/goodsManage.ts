@@ -23,6 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: '商品管理',
       icon: renderIcon(AppstoreOutlined),
+      permissions: ['goodsManage'],
       sort: 1,
     },
     children: [

@@ -14,7 +14,11 @@
     <template #header> 库存详情 </template>
 
     <div class="content">
-      <n-button @click="openEditInventoryModal" type="info" style="margin-bottom: 10px"
+      <n-button
+        v-if="hasPermission(['super_admin', 'admin'])"
+        @click="openEditInventoryModal"
+        type="info"
+        style="margin-bottom: 10px"
         >盘库</n-button
       >
       <vxe-grid ref="table$" v-bind="table" />
@@ -35,10 +39,12 @@
   import useVxeTable from '@/hooks/useVxeTable';
   import priceTrans from '@/utils/priceTransform';
   import EditInventoryModal from './editInventoryModal.vue';
-
+  import { usePermission } from '@/hooks/web/usePermission';
   import { getInventoryMaterialDetail } from '@/api/inventory';
+
   const emit = defineEmits(['confirm']);
 
+  const { hasPermission } = usePermission();
   const showModal = ref(false);
 
   const { table, table$ } = useVxeTable({

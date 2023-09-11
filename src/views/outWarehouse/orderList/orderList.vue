@@ -51,7 +51,9 @@
             >详情</n-button
           >
           <n-button
-            v-if="row.status === OrderStatusEnum.COMPLETE"
+            v-if="
+              row.status === OrderStatusEnum.COMPLETE && hasPermission(['super_admin', 'admin'])
+            "
             @click="openOrderCancelModal(row.id)"
             size="small"
             type="error"
@@ -106,9 +108,11 @@
   import OrderCancelModal from './container/orderCancelModal.vue';
   import AddOrEditOrderModal from '../components/AddOrEditOrderModal.vue';
   import OrderStatusHistory from '../components/OrderStatusHistory.vue';
+  import { usePermission } from '@/hooks/web/usePermission';
 
   import { getOrderList } from '@/api/order';
 
+  const { hasPermission } = usePermission();
   const tablePage = reactive({
     total: 0,
     currentPage: 1,
@@ -204,7 +208,6 @@
 
   function getOrderListApi() {
     table.loading = true;
-    console.log('datetime.value', datetime.value);
     getOrderList({
       currentPage: tablePage.currentPage,
       pageSize: tablePage.pageSize,

@@ -289,7 +289,6 @@
     spin.value = true;
     getOrderDetail(id)
       .then((res) => {
-        console.log('res', res);
         spin.value = false;
         setFormData(res);
 

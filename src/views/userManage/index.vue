@@ -8,7 +8,11 @@
       </template>
 
       <template #status_default="{ row }: any">
-        <n-popconfirm @positive-click="handleChangeStatus(row)" @negative-click="() => {}">
+        <n-popconfirm
+          :disabled="compareRole[role] < compareRole[row.role_code]"
+          @positive-click="handleChangeStatus(row)"
+          @negative-click="() => {}"
+        >
           <template #trigger>
             <n-switch
               :value="row.status"
@@ -16,6 +20,7 @@
               @click="handleStatusClick(row.status)"
               checked-value="y"
               unchecked-value="n"
+              :disabled="compareRole[role] < compareRole[row.role_code]"
             >
               <template #checked> 已启用 </template>
               <template #unchecked> 已禁用 </template>
@@ -27,10 +32,20 @@
 
       <template #options_default="{ row }: any">
         <n-space>
-          <n-button @click="openEditPasswordModal(row.id)" size="small" type="info"
+          <n-button
+            v-if="compareRole[role] > compareRole[row.role_code]"
+            @click="openEditPasswordModal(row.id)"
+            size="small"
+            type="info"
             >修改密码</n-button
           >
-          <n-button @click="openUserInfoModal(row)" size="small" type="info">修改信息</n-button>
+          <n-button
+            v-if="compareRole[role] > compareRole[row.role_code]"
+            @click="openUserInfoModal(row)"
+            size="small"
+            type="info"
+            >修改信息</n-button
+          >
         </n-space>
       </template>
 
@@ -68,9 +83,18 @@
   import EditPasswordModal from '@/components/EditPasswordModal/EditPasswordModal.vue';
   import EditUserInfoModal from './container/editUserInfoModal.vue';
   import AddUserModal from './container/addUserModal.vue';
-
-  import { roleMap } from '@/enums/roleEnum/';
+  import { useUserStore } from '@/store/modules/user';
+  import { roleMap } from '@/enums/roleEnum';
   import { getUserList, changeUserInfo } from '@/api/system/user';
+
+  const userStore = useUserStore();
+  const role = userStore.getUserInfo.role_code;
+
+  const compareRole = {
+    super_admin: 2,
+    admin: 1,
+    user: 0,
+  };
 
   const tablePage = reactive({
     total: 0,
@@ -126,7 +150,6 @@
     getUserList().then((res) => {
       table.data = res;
       tablePage.total = res.length;
-      console.log('res', res);
     });
   }
 
@@ -146,7 +169,6 @@
   }
 
   function handleChangeStatus(data: any) {
-    console.log('data', data);
     switchLoading.value = true;
     changeUserInfo({
       user_id: data.id,

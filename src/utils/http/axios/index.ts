@@ -90,7 +90,6 @@ const transform: AxiosTransform = {
     if (code === ResultEnum.SUCCESS) {
       return result;
     }
-    console.log('code', code);
     // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
     let errorMsg = message;
     switch (code) {

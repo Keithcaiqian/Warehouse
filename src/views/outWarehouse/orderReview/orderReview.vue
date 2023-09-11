@@ -60,7 +60,13 @@
           <n-button @click="openOrderDetailModal(row.id)" size="small" type="success"
             >详情</n-button
           >
-          <n-button @click="openOrderCheckModal(row.id)" size="small" type="warning">审核</n-button>
+          <n-button
+            v-if="hasPermission(['super_admin', 'admin'])"
+            @click="openOrderCheckModal(row.id)"
+            size="small"
+            type="warning"
+            >审核</n-button
+          >
           <n-popconfirm
             v-if="row.status === OrderStatusEnum.REJECT"
             @positive-click="handleSubmitOrderCheck(row.id)"
@@ -71,10 +77,18 @@
             </template>
             确定提交审核吗？
           </n-popconfirm>
-          <n-button @click="openAddOrEditOrderModal(row.id)" size="small" type="info"
+          <n-button
+            v-if="row.create_user === userStore.getUserInfo.username"
+            @click="openAddOrEditOrderModal(row.id)"
+            size="small"
+            type="info"
             >修改</n-button
           >
-          <n-popconfirm @positive-click="handleDeleteOrder(row.id)" @negative-click="() => {}">
+          <n-popconfirm
+            v-if="row.create_user === userStore.getUserInfo.username"
+            @positive-click="handleDeleteOrder(row.id)"
+            @negative-click="() => {}"
+          >
             <template #trigger>
               <n-button :loading="deleteLoading" size="small" type="error">删除</n-button>
             </template>
@@ -125,6 +139,7 @@
 <script setup lang="ts">
   import { ref, reactive, onMounted } from 'vue';
   import dayjs from 'dayjs';
+  import { useMessage } from 'naive-ui';
   import priceTrans from '@/utils/priceTransform';
   import useVxeTable from '@/hooks/useVxeTable';
   import { OrderStatusEnum, OrderStatusMap, UnOrderStatusList } from '@/enums/orderStatusEnum';
@@ -132,12 +147,13 @@
   import AddOrEditOrderModal from '../components/AddOrEditOrderModal.vue';
   import OrderCheckModal from '../components/OrderCheckModal.vue';
   import OrderStatusHistory from '../components/OrderStatusHistory.vue';
-
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { useUserStore } from '@/store/modules/user';
   import { getOrderCheckList, deleteOrder, editOrderStatus } from '@/api/order';
 
-  import { useMessage } from 'naive-ui';
-
+  const { hasPermission } = usePermission();
   const message = useMessage();
+  const userStore = useUserStore();
 
   const tablePage = reactive({
     total: 0,

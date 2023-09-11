@@ -104,7 +104,6 @@
       phone: userInfo.phone,
       role_code: userInfo.role_code,
     });
-    console.log('formDataRef', formDataRef.value);
     loading.value = false;
     showModal.value = true;
   }

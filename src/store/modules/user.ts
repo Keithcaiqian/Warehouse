@@ -22,6 +22,14 @@ export interface IUserState {
   info: UserInfoType;
 }
 
+const ex = 7 * 24 * 60 * 60;
+
+const permissionsRoute = {
+  super_admin: ['super_admin', 'goodsManage', 'putWarehouse', 'report', 'userManage'],
+  admin: ['admin', 'goodsManage', 'putWarehouse', 'report', 'userManage'],
+  user: [],
+};
+
 export const useUserStore = defineStore({
   id: 'app-user',
   state: (): IUserState => ({
@@ -67,12 +75,9 @@ export const useUserStore = defineStore({
       const response = await login(params);
       const { result, code } = response;
       if (code === ResultEnum.SUCCESS) {
-        const ex = 7 * 24 * 60 * 60;
         storage.set(ACCESS_TOKEN, result.token, ex);
-        storage.set(CURRENT_USER, result, ex);
         storage.set(IS_SCREENLOCKED, false);
         this.setToken(result.token);
-        this.setUserInfo(result);
       }
       return response;
     },
@@ -80,10 +85,14 @@ export const useUserStore = defineStore({
     // 获取用户信息
     async getInfo() {
       const result = await getUserInfoApi();
-      this.setPermissions([]);
+      storage.set(CURRENT_USER, result, ex);
       this.setUserInfo(result);
       this.setAvatar(result.avatar);
-      return result;
+      this.setPermissions(permissionsRoute[result.role_code].map((item) => ({ value: item })));
+      return {
+        ...result,
+        permissions: this.getPermissions,
+      };
     },
 
     // 登出

@@ -157,7 +157,6 @@
   }
 
   function open(data) {
-    console.log('data', data);
     if (data) {
       setFormData({
         ...data,

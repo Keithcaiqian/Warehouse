@@ -34,7 +34,7 @@
             >详情</n-button
           >
           <n-button
-            v-if="row.is_assemble === 'y'"
+            v-if="row.is_assemble === 'y' && hasPermission(['super_admin', 'admin'])"
             @click="openInventoryProductAssembleModal(row)"
             size="small"
             type="success"
@@ -82,11 +82,13 @@
   import useVxeTable from '@/hooks/useVxeTable';
   import NP from 'number-precision';
   import priceTrans from '@/utils/priceTransform';
-
+  import { usePermission } from '@/hooks/web/usePermission';
   import InventoryProductDetailModal from './container/inventoryProductDetailModal.vue';
   import InventoryProductAssembleModal from './container/inventoryProductAssembleModal.vue';
 
   import { getInventoryProductList } from '@/api/inventory';
+
+  const { hasPermission } = usePermission();
 
   // 总成本
   const price = computed(() => {

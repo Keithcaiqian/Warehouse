@@ -61,7 +61,6 @@
       required: true,
       trigger: ['input', 'blur'],
       validator(_rule, value: string) {
-        console.log('value', value, formDataRef.value.text);
         if (!value) {
           return new Error('不能为空');
         } else if (value !== props.text) {

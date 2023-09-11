@@ -23,6 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: '入库',
       icon: renderIcon(DatabaseFilled),
+      permissions: ['putWarehouse'],
       sort: 2,
     },
     children: [

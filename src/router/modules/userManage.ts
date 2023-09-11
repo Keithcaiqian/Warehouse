@@ -26,6 +26,7 @@ const routes: Array<RouteRecordRaw> = [
       sort: 10,
       isRoot: true,
       activeMenu: 'userManage_index',
+      permissions: ['userManage'],
     },
     children: [
       {
