@@ -58,7 +58,7 @@
 
   import useForm from '@/hooks/useForm';
   import { onlyNumber } from '@/utils/nativeAllowInput';
-  import { RoleEnum, roleList } from '@/enums/roleEnum/';
+  import { RoleEnum, roleList } from '@/enums/roleEnum';
 
   import { registerUser } from '@/api/system/user';
 
