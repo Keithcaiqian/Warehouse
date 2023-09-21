@@ -15,7 +15,7 @@ export interface IUserState {
   info: any;
 }
 
-export const useUserInfoStoreStore = defineStore('sceneNavRecommend', () => {
+export const useUserInfoStoreStore = defineStore('userInfoStore', () => {
   const state = reactive<{
     userInfo: any; //用户信息
     token: string;
