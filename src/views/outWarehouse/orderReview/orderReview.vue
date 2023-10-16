@@ -68,7 +68,10 @@
             >审核</n-button
           >
           <n-popconfirm
-            v-if="row.status === OrderStatusEnum.REJECT"
+            v-if="
+              row.status === OrderStatusEnum.REJECT &&
+              row.create_user === userStore.getUserInfo.username
+            "
             @positive-click="handleSubmitOrderCheck(row.id)"
             @negative-click="() => {}"
           >

@@ -1,7 +1,7 @@
 import { http } from '@/utils/http/axios';
 
 /**
- * @description: 获取原料列表
+ * @description: 获取订单列表
  */
 export function getOrderList(params: any) {
   return http.request({
@@ -87,7 +87,7 @@ export function editOrderStatus(params: any) {
 }
 
 /**
- * @description: 修改订单状态历史
+ * @description: 获取订单状态历史
  */
 export function getOrderStatusHistory(id: string) {
   return http.request({
