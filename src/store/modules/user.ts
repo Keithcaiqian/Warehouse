@@ -85,12 +85,15 @@ export const useUserStore = defineStore({
     // 获取用户信息
     async getInfo() {
       const result = await getUserInfoApi();
-      storage.set(CURRENT_USER, result, ex);
-      this.setUserInfo(result);
-      this.setAvatar(result.avatar);
-      this.setPermissions(permissionsRoute[result.role_code].map((item) => ({ value: item })));
+      storage.set(CURRENT_USER, result.userInfo, ex);
+      storage.set(CURRENT_USER, result.token, ex);
+      this.setUserInfo(result.userInfo);
+      this.setAvatar(result.userInfo.avatar);
+      this.setPermissions(
+        permissionsRoute[result.userInfo.role_code].map((item) => ({ value: item }))
+      );
       return {
-        ...result,
+        ...result.userInfo,
         permissions: this.getPermissions,
       };
     },
